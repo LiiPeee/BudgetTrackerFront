@@ -14,11 +14,12 @@ const baseTransaction: TransactionResponse = {
 
 describe("TransactionsTable date column", () => {
   it("renders the competence date when present", () => {
+    // Regression guard: the date must render as-is (15/07/2026), not shifted
+    // back a day by the UTC→local parsing bug (14/07/2026 in GMT-3).
     const competenceDate = "2026-07-15";
-    const expected = new Date(competenceDate).toLocaleDateString("pt-BR");
     render(<TransactionsTable transactions={[{ ...baseTransaction, competenceDate }]} onEdit={vi.fn()} onDelete={vi.fn()} />);
 
-    expect(screen.getByText(expected)).toBeInTheDocument();
+    expect(screen.getByText("15/07/2026")).toBeInTheDocument();
   });
 
   it("falls back to a dash when there is no date", () => {

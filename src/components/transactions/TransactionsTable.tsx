@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { formatDateOnly } from "@/helper/date";
 import type { TransactionResponse } from "@/helper/transaction";
 import { formatBRL, RECURRENCE_LABEL_KEY } from "@/helper/utils";
 import { Pencil, Trash2 } from "lucide-react";
@@ -34,11 +35,7 @@ export function TransactionsTable({ transactions, onEdit, onDelete }: Transactio
         {transactions.map((transaction) => (
           <TableRow key={transaction.id}>
             <TableCell className="truncate">
-              {transaction.competenceDate
-                ? new Date(transaction.competenceDate).toLocaleDateString("pt-BR")
-                : transaction.createdDate
-                  ? new Date(transaction.createdDate).toLocaleDateString("pt-BR")
-                  : "-"}
+              {formatDateOnly(transaction.competenceDate ?? transaction.createdDate) || "-"}
             </TableCell>
             <TableCell className="truncate">{transaction.description}</TableCell>
             <TableCell className="truncate">{transaction.category?.name ?? "-"}</TableCell>

@@ -17,3 +17,14 @@ if (!Element.prototype.hasPointerCapture) {
 if (!Element.prototype.releasePointerCapture) {
   Element.prototype.releasePointerCapture = vi.fn();
 }
+
+// jsdom não implementa ResizeObserver, usado pelo recharts (ResponsiveContainer)
+// nos gráficos de pizza. Sem ele, a página de Stocks falha ao montar.
+if (!("ResizeObserver" in globalThis)) {
+  class ResizeObserverMock {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+  globalThis.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
+}

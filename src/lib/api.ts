@@ -108,28 +108,31 @@ type ApiErrorLike = {
   message?: string;
   response?: {
     data?: {
-      error?: { message?: string };
+      error?: { message?: string; code?: string };
       message?: string;
+      code?: string;
     };
   };
 };
 
 type ApiErrorBody = {
-  error?: { message?: string };
+  error?: { message?: string; code?: string };
   message?: string;
+  code?: string;
 };
 
 export function getErrorMessage(error: unknown, fallback: string): string {
   const typed = error as ApiErrorLike;
   const raw = typed?.response?.data?.error?.message ?? typed?.response?.data?.message ?? typed?.message;
-  return translateBackendError(raw, fallback);
+  const code = typed?.response?.data?.error?.code ?? typed?.response?.data?.code;
+  return translateBackendError(raw, fallback, code);
 }
 
 export async function getResponseErrorMessage(response: Response, fallback: string): Promise<string> {
   try {
     const payload = (await response.json()) as ApiErrorBody;
     const raw = payload.error?.message?.trim() || payload.message?.trim();
-    return translateBackendError(raw, fallback);
+    return translateBackendError(raw, fallback, payload.error?.code ?? payload.code);
   } catch {
     return fallback;
   }

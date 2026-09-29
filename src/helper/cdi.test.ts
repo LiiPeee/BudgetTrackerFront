@@ -93,6 +93,17 @@ describe("calcCdiDailyHistory", () => {
     expect(rows.map((row) => row.date)).toEqual(["2026-07-07", "2026-07-08", "2026-07-09"]);
     expect(rows[2].accumulatedValue).toBeGreaterThan(rows[0].accumulatedValue);
   });
+
+  it("keeps the last daily row in sync with the closed-form summary (no float drift)", () => {
+    const today = new Date("2026-07-16T12:00:00Z");
+    const inputs = { principal: 1000, investmentDate: "2026-07-06", ...RATES };
+
+    const summary = calcCdiAccruedSummary(inputs, today);
+    const daily = calcCdiDailyHistory(inputs, today);
+
+    expect(daily).toHaveLength(summary.elapsedDays);
+    expect(daily[daily.length - 1].accumulatedValue).toBeCloseTo(summary.accruedValue, 10);
+  });
 });
 
 describe("aggregateDailyToMonthly", () => {

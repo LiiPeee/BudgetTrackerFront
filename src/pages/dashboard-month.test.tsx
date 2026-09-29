@@ -1,7 +1,8 @@
 import type { BudgetLimit } from "@/helper/budget";
 import { getDefaultYearMonth } from "@/helper/utils";
-import { getBudgetLimitsByAccountPage } from "@/services/budget";
+import { getBudgetLimitsByMonthYear } from "@/services/budget";
 import { getExpenseValue } from "@/services/transaction";
+import { HideValuesProvider } from "@/contexts/hide-values-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
@@ -15,7 +16,7 @@ vi.mock("@/services/contact", () => ({
 }));
 
 vi.mock("@/services/budget", () => ({
-  getBudgetLimitsByAccountPage: vi.fn(async () => ({ pageNumber: 1, pageSize: 10, totalRecords: 0, items: [] })),
+  getBudgetLimitsByMonthYear: vi.fn(async () => ({ pageNumber: 1, pageSize: 10, totalRecords: 0, items: [] })),
   createBudgetLimit: vi.fn(async () => undefined),
 }));
 
@@ -32,7 +33,7 @@ vi.mock("@/services/transaction", async () => {
 });
 
 const mockedGetExpenseValue = vi.mocked(getExpenseValue);
-const mockedGetBudgets = vi.mocked(getBudgetLimitsByAccountPage);
+const mockedGetBudgets = vi.mocked(getBudgetLimitsByMonthYear);
 
 function overBudget(month: number, year: number): BudgetLimit {
   return { id: 1, month, year, accountId: 7, limitAmount: 100, percentage: 120, isLimit: true, category: { id: 1, name: "Lazer" } };
@@ -41,11 +42,13 @@ function overBudget(month: number, year: number): BudgetLimit {
 function renderDashboard() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={client}>
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Dashboard />
-      </MemoryRouter>
-    </QueryClientProvider>,
+    <HideValuesProvider>
+      <QueryClientProvider client={client}>
+        <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <Dashboard />
+        </MemoryRouter>
+      </QueryClientProvider>
+    </HideValuesProvider>,
   );
 }
 
@@ -85,15 +88,14 @@ describe("Dashboard month navigation", () => {
     expect(screen.getByText("1 orçamento acima do limite neste mês.")).toBeInTheDocument();
   });
 
-  it("does not show a budget alert when the over-limit budget belongs to another month", async () => {
+  it("queries budgets for the selected month only and shows no alert when none is over", async () => {
     const { month, year } = getDefaultYearMonth();
-    const other = nextMonth(month, year);
-    mockedGetBudgets.mockResolvedValue({ pageNumber: 1, pageSize: 1, totalRecords: 1, items: [overBudget(other.month, other.year)] });
+    mockedGetBudgets.mockResolvedValue({ pageNumber: 1, pageSize: 1, totalRecords: 0, items: [] });
 
     renderDashboard();
 
     await waitFor(() => {
-      expect(mockedGetExpenseValue).toHaveBeenCalledWith(month, year);
+      expect(mockedGetBudgets).toHaveBeenCalledWith(month, year, 1);
     });
     expect(screen.queryByText("Atenção aos orçamentos")).not.toBeInTheDocument();
   });

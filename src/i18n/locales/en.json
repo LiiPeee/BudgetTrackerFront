@@ -508,6 +508,8 @@
     "contactOrCategoryNotFound": "Contact or category not found for this transaction.",
     "transactionNotFound": "Transaction not found or access denied.",
     "noTransactions": "No transactions found.",
+    "unauthorized": "Your session is invalid. Please sign in again.",
+    "notFound": "The requested resource was not found.",
     "somethingWrong": "An unexpected error occurred. Please try again later.",
     "contactNotFound": "Contact not found or access denied.",
     "contactIdInvalid": "Invalid contact ID."

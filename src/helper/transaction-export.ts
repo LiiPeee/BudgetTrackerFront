@@ -1,4 +1,5 @@
 import { toCsv } from "@/helper/csv";
+import { formatDateOnly } from "@/helper/date";
 import type { TransactionResponse } from "@/helper/transaction";
 import { TRANSACTION_TYPE } from "@/helper/transaction";
 
@@ -11,16 +12,7 @@ function formatType(typeTransaction: number): string {
 }
 
 function formatDate(transaction: TransactionResponse): string {
-  const raw = transaction.competenceDate ?? transaction.createdDate;
-  if (!raw) return "";
-  // Parse the date-only part as local (avoids the UTC→local off-by-one that
-  // `new Date("2026-07-15")` causes in negative-offset timezones).
-  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(raw);
-  if (match) {
-    const [, year, month, day] = match;
-    return `${day}/${month}/${year}`;
-  }
-  return new Date(raw).toLocaleDateString("pt-BR");
+  return formatDateOnly(transaction.competenceDate ?? transaction.createdDate);
 }
 
 function formatAmount(amount: number): string {

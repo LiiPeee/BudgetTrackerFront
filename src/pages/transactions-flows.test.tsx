@@ -3,6 +3,7 @@ import type { PagedTransactionsResponse, TransactionResponse } from "@/helper/tr
 import { getDefaultYearMonth } from "@/helper/utils";
 import { getAllContacts } from "@/services/contact";
 import { deleteTransactions, getAllTransactionsPaged, getEconomy, getExpenseValue, getIncomeValue } from "@/services/transaction";
+import { HideValuesProvider } from "@/contexts/hide-values-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { ReactElement } from "react";
@@ -92,16 +93,18 @@ function renderWithProviders(ui: ReactElement) {
   });
 
   return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true,
-        }}
-      >
-        {ui}
-      </MemoryRouter>
-    </QueryClientProvider>,
+    <HideValuesProvider>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
+          {ui}
+        </MemoryRouter>
+      </QueryClientProvider>
+    </HideValuesProvider>,
   );
 }
 

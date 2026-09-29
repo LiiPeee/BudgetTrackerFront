@@ -1,4 +1,5 @@
 import type { CreateBudgetLimitRequest, PagedBudgetLimitsResponse } from "@/helper/budget";
+import { getDefaultYearMonth } from "@/helper/utils";
 import { getJson, postVoid } from "@/lib/api";
 
 export async function createBudgetLimit(input: CreateBudgetLimitRequest): Promise<void> {
@@ -6,5 +7,14 @@ export async function createBudgetLimit(input: CreateBudgetLimitRequest): Promis
 }
 
 export async function getBudgetLimitsByAccountPage(pageNumber = 1): Promise<PagedBudgetLimitsResponse> {
-  return getJson<PagedBudgetLimitsResponse>("/BudgetLimit/GetByAccountId", { pageNumber }, "Falha ao buscar orçamentos");
+  const { month, year } = getDefaultYearMonth();
+  return getBudgetLimitsByMonthYear(month, year, pageNumber);
+}
+
+export async function getBudgetLimitsByMonthYear(month: number, year: number, pageNumber = 1): Promise<PagedBudgetLimitsResponse> {
+  return getJson<PagedBudgetLimitsResponse>(
+    "/BudgetLimit/GetByAccountId",
+    { month, year, pageNumber },
+    "Falha ao buscar orçamentos",
+  );
 }

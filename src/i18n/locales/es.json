@@ -508,6 +508,8 @@
     "contactOrCategoryNotFound": "Contacto o categoría no encontrado para esta transacción.",
     "transactionNotFound": "Transacción no encontrada o sin permiso de acceso.",
     "noTransactions": "No se encontraron transacciones.",
+    "unauthorized": "Tu sesión no es válida. Inicia sesión de nuevo.",
+    "notFound": "El recurso solicitado no fue encontrado.",
     "somethingWrong": "Ocurrió un error inesperado. Inténtalo de nuevo más tarde.",
     "contactNotFound": "Contacto no encontrado o sin permiso de acceso.",
     "contactIdInvalid": "ID de contacto inválido."

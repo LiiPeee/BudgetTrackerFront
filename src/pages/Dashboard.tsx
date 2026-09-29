@@ -13,7 +13,7 @@ import { useHideValues } from "@/contexts/hide-values-context";
 import { summarizeBudgetAlerts } from "@/helper/budget";
 import type { TransactionForm } from "@/helper/transaction";
 import { formatBRLMasked } from "@/helper/utils";
-import { useBudgetLimits } from "@/hooks/budget/use-budget-limits";
+import { useBudgetAlerts } from "@/hooks/budget/use-budget-alerts";
 import { useContact } from "@/hooks/contact/use-contact";
 import { useTransaction } from "@/hooks/transaction/use-create-transaction";
 import { useExpenseByCategory } from "@/hooks/transaction/use-expense-by-category";
@@ -54,9 +54,9 @@ const Dashboard = () => {
 
   const { submitTransaction, onOpenChange, transactionDefaults, editingTransaction, isDialogOpen } = useTransaction();
   const { contacts, getAllContact } = useContact();
-  const { budgets } = useBudgetLimits();
+  const { data: monthBudgets } = useBudgetAlerts(month, year);
 
-  const overBudgetCount = summarizeBudgetAlerts(budgets.filter((budget) => budget.month === month && budget.year === year)).over;
+  const overBudgetCount = summarizeBudgetAlerts(monthBudgets ?? []).over;
 
   useProductTour("dashboard");
 
