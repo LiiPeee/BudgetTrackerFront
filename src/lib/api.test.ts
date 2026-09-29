@@ -103,6 +103,38 @@ describe("authFetch reactive token refresh", () => {
     expect(refreshCalls).toHaveLength(1);
   });
 
+  it("refresh request sends expired access token in Authorization header and refresh token in body", async () => {
+    fetchMock.mockImplementation((url: string) => {
+      if (url.includes("/Auth/RefreshToken")) {
+        return Promise.resolve(createJsonResponse({ accessToken: "new-access", refreshToken: "new-refresh" }));
+      }
+      return Promise.resolve(createJsonResponse({}, false, 401));
+    });
+
+    await authFetch(`${BASE_URL}/Protected/Get`);
+
+    const refreshCall = fetchMock.mock.calls.find((c) => String(c[0]).includes("/Auth/RefreshToken"));
+    expect(refreshCall).toBeDefined();
+
+    const [, init] = refreshCall!;
+    const headers = init.headers as Record<string, string>;
+    expect(headers["Authorization"]).toBe("Bearer expired-access");
+    expect(init.body).toBe(JSON.stringify({ refreshToken: "stored-refresh" }));
+  });
+
+  it("does not attempt refresh when no access token is stored", async () => {
+    sessionStorage.removeItem("accessToken");
+
+    fetchMock.mockResolvedValueOnce(createJsonResponse({}, false, 401));
+
+    const response = await authFetch(`${BASE_URL}/Protected/Get`);
+
+    expect(response.status).toBe(401);
+    expect(getAccessToken()).toBeNull();
+    const refreshCalls = fetchMock.mock.calls.filter((c) => String(c[0]).includes("/Auth/RefreshToken"));
+    expect(refreshCalls).toHaveLength(0);
+  });
+
   it("clears auth when refresh fails", async () => {
     fetchMock.mockImplementation((url: string) => {
       if (url.includes("/Auth/RefreshToken")) return Promise.resolve(createJsonResponse({}, false, 401));
