@@ -122,11 +122,18 @@ export function calcFixedIncomeChangePercentage(stock: StockResponse, cdiAnnualR
 
 export function mapStockFormToRequest(form: StockForm): StockRequest {
   const isRendaFixa = form.isStock === "false";
+  const price = Number.parseFloat(form.price.replace(",", "."));
+  const quantity = Number.parseInt(form.quantity, 10);
+
+  if (Number.isNaN(price) || Number.isNaN(quantity)) {
+    throw new Error("price/quantity inválido: o schema do formulário deveria ter bloqueado este valor");
+  }
+
   return {
     ticker: form.ticker.trim().toUpperCase(),
     title: form.title.trim(),
-    price: Number.parseFloat(form.price.replace(",", ".")),
-    quantity: Number.parseInt(form.quantity, 10),
+    price,
+    quantity,
     description: form.description.trim() || undefined,
     isStock: !isRendaFixa,
     fixedIncomeType: isRendaFixa ? (form.fixedIncomeType || undefined) : undefined,

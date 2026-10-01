@@ -1,3 +1,4 @@
+import { getScopedItem, setScopedItem } from "@/lib/scoped-storage";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 const HIDE_VALUES_STORAGE_KEY = "hideValues";
@@ -10,14 +11,14 @@ type HideValuesContextValue = {
 const HideValuesContext = createContext<HideValuesContextValue | undefined>(undefined);
 
 function getInitialHiddenState(): boolean {
-  return localStorage.getItem(HIDE_VALUES_STORAGE_KEY) === "true";
+  return getScopedItem(HIDE_VALUES_STORAGE_KEY) === "true";
 }
 
 export function HideValuesProvider({ children }: { children: ReactNode }) {
   const [isHidden, setIsHidden] = useState(getInitialHiddenState);
 
   useEffect(() => {
-    localStorage.setItem(HIDE_VALUES_STORAGE_KEY, String(isHidden));
+    setScopedItem(HIDE_VALUES_STORAGE_KEY, String(isHidden));
   }, [isHidden]);
 
   return (

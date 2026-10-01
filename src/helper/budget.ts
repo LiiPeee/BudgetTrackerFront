@@ -51,11 +51,15 @@ export const budgetFormDefaults: BudgetLimitForm = {
 export function mapBudgetFormToRequest(form: BudgetLimitForm): CreateBudgetLimitRequest {
   const parsedAmount = Number.parseFloat(form.limitAmount.replace(",", "."));
 
+  if (!Number.isFinite(parsedAmount)) {
+    throw new Error("limitAmount inválido: o schema do formulário deveria ter bloqueado este valor");
+  }
+
   return {
     month: Number(form.month),
     year: Number(form.year),
     categoryName: form.categoryName.trim(),
-    limitAmount: Number.isFinite(parsedAmount) ? parsedAmount : 0,
+    limitAmount: parsedAmount,
   };
 }
 
