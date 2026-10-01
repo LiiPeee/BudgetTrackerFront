@@ -1,5 +1,5 @@
 import { getAccessToken, onAuthUnauthorized } from "@/lib/api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 interface ProtectedRouteProps {
@@ -7,12 +7,22 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  // O accessToken vive em sessionStorage, então sobrevive ao F5 e pode ser
-  // lido de forma síncrona — não há estado de "checando" a resolver.
-  const isAuthenticated = getAccessToken() != null;
+  // Estado reativo: re-renderiza quando o token muda (logout em outra aba via
+  // evento "storage", ou sessão expirada via "auth:unauthorized").
+  const [isAuthenticated, setIsAuthenticated] = useState(() => getAccessToken() != null);
 
   useEffect(() => {
-    return onAuthUnauthorized(() => window.location.replace("/auth"));
+    const handleStorage = () => setIsAuthenticated(getAccessToken() != null);
+    const unsubscribe = onAuthUnauthorized(() => {
+      setIsAuthenticated(false);
+      window.location.replace("/auth");
+    });
+
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      unsubscribe();
+      window.removeEventListener("storage", handleStorage);
+    };
   }, []);
 
   if (!isAuthenticated) {

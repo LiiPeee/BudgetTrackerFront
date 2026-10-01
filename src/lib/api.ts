@@ -9,14 +9,11 @@ const _apiUrl = import.meta.env.VITE_API_URL as string | undefined;
 if (!_apiUrl) throw new Error("[Config] VITE_API_URL is not set. All API calls will fail.");
 export const BASE_URL: string = _apiUrl;
 
-// Secret known only to this module — prevents external scripts from triggering auth:unauthorized
-const AUTH_EVENT_SECRET = crypto.randomUUID();
-
+// Evento de sessão expirada. Sem "secret": qualquer script no bundle consegue ler
+// a constante, então ela não protege contra XSS — apenas contra acidentes, e o
+// custo de manutenção não compensa. A proteção real é o refresh reativo + logout.
 export function onAuthUnauthorized(handler: () => void): () => void {
-  const listener = (e: Event) => {
-    if ((e as CustomEvent<{ secret: string }>).detail?.secret !== AUTH_EVENT_SECRET) return;
-    handler();
-  };
+  const listener = () => handler();
   window.addEventListener("auth:unauthorized", listener);
   return () => window.removeEventListener("auth:unauthorized", listener);
 }
@@ -70,7 +67,7 @@ function refreshOnce(): Promise<boolean> {
 
 function failAuth(): void {
   clearAuth();
-  window.dispatchEvent(new CustomEvent("auth:unauthorized", { detail: { secret: AUTH_EVENT_SECRET } }));
+  window.dispatchEvent(new Event("auth:unauthorized"));
 }
 
 function withAuthHeaders(options: RequestInit): RequestInit {

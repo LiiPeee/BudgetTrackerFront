@@ -15,6 +15,7 @@ import {
 import { fetchAllPages } from "@/lib/paginate";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { QUERY_STALE_TIME } from "@/constants/query";
+import { useMemo } from "react";
 
 export type TransactionListQuery =
   | { kind: "all"; month: number; year: number }
@@ -76,10 +77,14 @@ export function useTransactionsList(query: TransactionListQuery, page: number) {
   const totalRecords = data?.totalRecords ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
 
-  const transactions = (data?.items ?? []).map((x) => ({
-    ...x,
-    recurrence: normalizeRecurrence(x.recurrence),
-  })) as TransactionResponse[];
+  const transactions = useMemo(
+    () =>
+      (data?.items ?? []).map((x) => ({
+        ...x,
+        recurrence: normalizeRecurrence(x.recurrence),
+      })) as TransactionResponse[],
+    [data],
+  );
 
   return {
     transactions,

@@ -1,5 +1,6 @@
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
+import { getScopedItem, removeScopedItem, setScopedItem } from "@/lib/scoped-storage";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -44,15 +45,15 @@ export function useProductTour(segment: Segment) {
   const { t } = useTranslation();
 
   useEffect(() => {
-    const isDone = localStorage.getItem(TOUR_DONE_KEY) === "true";
+    const isDone = getScopedItem(TOUR_DONE_KEY) === "true";
     if (isDone) return;
 
-    const storedSegment = localStorage.getItem(TOUR_SEGMENT_KEY) as Segment | null;
+    const storedSegment = getScopedItem(TOUR_SEGMENT_KEY) as Segment | null;
     const isFirstVisit = storedSegment === null && segment === "dashboard";
     const shouldRun = isFirstVisit || storedSegment === segment;
     if (!shouldRun) return;
 
-    localStorage.setItem(TOUR_SEGMENT_KEY, segment);
+    setScopedItem(TOUR_SEGMENT_KEY, segment);
 
     const nextSegment = SEGMENTS[SEGMENTS.indexOf(segment) + 1] ?? null;
 
@@ -67,12 +68,12 @@ export function useProductTour(segment: Segment) {
       onNextClick: () => {
         if (driverObj.isLastStep()) {
           if (nextSegment) {
-            localStorage.setItem(TOUR_SEGMENT_KEY, nextSegment);
+            setScopedItem(TOUR_SEGMENT_KEY, nextSegment);
             driverObj.destroy();
             navigate(SEGMENT_ROUTES[nextSegment]);
           } else {
-            localStorage.setItem(TOUR_DONE_KEY, "true");
-            localStorage.removeItem(TOUR_SEGMENT_KEY);
+            setScopedItem(TOUR_DONE_KEY, "true");
+            removeScopedItem(TOUR_SEGMENT_KEY);
             driverObj.destroy();
           }
         } else {
@@ -80,8 +81,8 @@ export function useProductTour(segment: Segment) {
         }
       },
       onDestroyStarted: () => {
-        localStorage.setItem(TOUR_DONE_KEY, "true");
-        localStorage.removeItem(TOUR_SEGMENT_KEY);
+        setScopedItem(TOUR_DONE_KEY, "true");
+        removeScopedItem(TOUR_SEGMENT_KEY);
         driverObj.destroy();
       },
       steps: steps.map((s) => ({

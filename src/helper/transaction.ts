@@ -90,12 +90,16 @@ export function mapTransactionFormToRequest(form: TransactionForm): TransactionR
   const numberOfInstallment = form.numberOfInstallment.trim() ? Number.parseInt(form.numberOfInstallment, 10) : null;
   const dateOfInstallment = form.dateOfInstallment.trim() ? Number.parseInt(form.dateOfInstallment, 10) : null;
 
+  if (Number.isNaN(amount)) {
+    throw new Error("amount inválido: o schema do formulário deveria ter bloqueado este valor");
+  }
+
   return {
     transactionName: form.transactionName.trim(),
     description: form.description.trim(),
     category: form.category.trim(),
     subCategory: form.subCategory.trim() || undefined,
-    amount: Number.isNaN(amount) ? 0 : amount,
+    amount,
     type: form.type,
     paid: form.paid === "Sim",
     numberOfInstallment,

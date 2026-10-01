@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
+import { FormSelectField } from "@/components/ui/form-select-field";
 import { FormTextField } from "@/components/ui/form-text-field";
 import { LoadingButton } from "@/components/ui/loading-button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toCategoryKey } from "@/helper/category";
 import type { Contact } from "@/helper/contact";
 import { type TransactionForm, transactionFormSchema } from "@/helper/transaction";
@@ -74,51 +74,23 @@ export function TransactionFormDialog({
               <FormTextField control={form.control} name="description" label={t("fieldDescription")} placeholder={t("fieldDescriptionPlaceholder")} />
             )}
 
-            <FormField
+            <FormSelectField
               control={form.control}
               name="paid"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("fieldPaid")}</FormLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("select")} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Sim">{t("yes")}</SelectItem>
-                      <SelectItem value="Não">{t("no")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t("fieldPaid")}
+              placeholder={t("select")}
+              options={[
+                { value: "Sim", label: t("yes") },
+                { value: "Não", label: t("no") },
+              ]}
             />
 
-            <FormField
+            <FormSelectField
               control={form.control}
               name="contactName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("fieldContact")}</FormLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("select")} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {contacts.map((contact) => (
-                        <SelectItem key={contact.id ?? contact.name} value={contact.name ?? ""}>
-                          {contact.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t("fieldContact")}
+              placeholder={t("select")}
+              options={contacts.map((contact) => ({ value: contact.name ?? "", label: contact.name ?? "" }))}
             />
 
             <FormTextField control={form.control} name="numberOfInstallment" label={t("fieldInstallments")} placeholder={t("fieldInstallmentsPlaceholder")} />
@@ -126,78 +98,39 @@ export function TransactionFormDialog({
               <FormTextField control={form.control} name="dateOfInstallment" label={t("fieldInstallmentDate")} placeholder={t("fieldInstallmentDatePlaceholder")} />
             )}
 
-            <FormField
+            <FormSelectField
               control={form.control}
               name="recurrence"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("fieldRecurrence")}</FormLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("selectShort")} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="NONE">{t("recurrenceNone")}</SelectItem>
-                      <SelectItem value="DAILY">{t("recurrenceDaily")}</SelectItem>
-                      <SelectItem value="BIWEEKLY">{t("recurrenceBiweekly")}</SelectItem>
-                      <SelectItem value="MONTHLY">{t("recurrenceMonthly")}</SelectItem>
-                      <SelectItem value="OCCASIONALLY">{t("recurrenceOccasionally")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t("fieldRecurrence")}
+              placeholder={t("selectShort")}
+              options={[
+                { value: "NONE", label: t("recurrenceNone") },
+                { value: "DAILY", label: t("recurrenceDaily") },
+                { value: "BIWEEKLY", label: t("recurrenceBiweekly") },
+                { value: "MONTHLY", label: t("recurrenceMonthly") },
+                { value: "OCCASIONALLY", label: t("recurrenceOccasionally") },
+              ]}
             />
 
             <FormTextField control={form.control} name="amount" label={t("fieldAmount")} type="number" step="0.01" placeholder={t("fieldAmountPlaceholder")} />
 
-            <FormField
+            <FormSelectField
               control={form.control}
               name="type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("fieldType")}</FormLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("select")} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Income">{t("typeIncome")}</SelectItem>
-                      <SelectItem value="Expense">{t("typeExpense")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t("fieldType")}
+              placeholder={t("select")}
+              options={[
+                { value: "Income", label: t("typeIncome") },
+                { value: "Expense", label: t("typeExpense") },
+              ]}
             />
 
-            <FormField
+            <FormSelectField
               control={form.control}
               name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("fieldCategory")}</FormLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("fieldCategoryPlaceholder")} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categoryOptions.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {t(`categories.${toCategoryKey(category)}`)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t("fieldCategory")}
+              placeholder={t("fieldCategoryPlaceholder")}
+              options={categoryOptions.map((category) => ({ value: category, label: t(`categories.${toCategoryKey(category)}`) }))}
             />
 
             <FormTextField control={form.control} name="subCategory" label={t("fieldSubCategory")} placeholder={t("fieldSubCategoryPlaceholder")} />

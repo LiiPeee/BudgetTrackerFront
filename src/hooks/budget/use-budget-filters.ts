@@ -1,4 +1,5 @@
 import { type BudgetLimit, getBudgetCategoryName } from "@/helper/budget";
+import { useClientPagination } from "@/hooks/use-client-pagination";
 import { useCallback, useMemo, useState } from "react";
 
 const PAGE_SIZE = 10;
@@ -37,10 +38,7 @@ export function useBudgetFilters(budgets: BudgetLimit[]): UseBudgetFiltersResult
   const totalPages = Math.max(1, Math.ceil(totalRecords / PAGE_SIZE));
   const safeCurrentPage = Math.min(currentPage, totalPages);
 
-  const paginatedBudgets = useMemo(() => {
-    const start = (safeCurrentPage - 1) * PAGE_SIZE;
-    return filteredBudgets.slice(start, start + PAGE_SIZE);
-  }, [filteredBudgets, safeCurrentPage]);
+  const { items: paginatedBudgets } = useClientPagination(filteredBudgets, safeCurrentPage, PAGE_SIZE);
 
   // Alterar um filtro volta para a primeira página (substitui o useEffect de reset).
   const setFilterName = useCallback((value: string) => {
