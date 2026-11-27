@@ -70,9 +70,7 @@ export function TransactionFormDialog({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormTextField control={form.control} name="transactionName" label={t("fieldName")} placeholder={t("fieldNamePlaceholder")} />
-            {!editingTransaction && (
-              <FormTextField control={form.control} name="description" label={t("fieldDescription")} placeholder={t("fieldDescriptionPlaceholder")} />
-            )}
+            <FormTextField control={form.control} name="description" label={t("fieldDescription")} placeholder={t("fieldDescriptionPlaceholder")} />
 
             <FormSelectField
               control={form.control}
@@ -93,9 +91,11 @@ export function TransactionFormDialog({
               options={contacts.map((contact) => ({ value: contact.name ?? "", label: contact.name ?? "" }))}
             />
 
-            <FormTextField control={form.control} name="numberOfInstallment" label={t("fieldInstallments")} placeholder={t("fieldInstallmentsPlaceholder")} />
             {!editingTransaction && (
-              <FormTextField control={form.control} name="dateOfInstallment" label={t("fieldInstallmentDate")} placeholder={t("fieldInstallmentDatePlaceholder")} />
+              <>
+                <FormTextField control={form.control} name="numberOfInstallment" label={t("fieldInstallments")} placeholder={t("fieldInstallmentsPlaceholder")} />
+                <FormTextField control={form.control} name="dateOfInstallment" label={t("fieldInstallmentDate")} placeholder={t("fieldInstallmentDatePlaceholder")} />
+              </>
             )}
 
             <FormSelectField

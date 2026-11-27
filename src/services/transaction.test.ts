@@ -51,6 +51,7 @@ describe("transaction service", () => {
     await expect(
       updateTransaction(10, {
         transactionName: "Internet",
+        description: "Conta de internet",
         paid: true,
         contactName: "Contato A",
         recurrence: "Mensal",

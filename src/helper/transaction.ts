@@ -23,7 +23,7 @@ export interface TransactionRequest {
   date?: string;
 }
 
-export type EditTransactionRequest = Omit<TransactionRequest, "description" | "dateOfInstallment" | "date">;
+export type EditTransactionRequest = Omit<TransactionRequest, "numberOfInstallment" | "dateOfInstallment" | "date">;
 
 export interface TransactionForm {
   id: number;
@@ -111,7 +111,8 @@ export function mapTransactionFormToRequest(form: TransactionForm): TransactionR
 }
 
 export function mapTransactionFormToEditRequest(form: TransactionForm): EditTransactionRequest {
-  const { description, dateOfInstallment, date, ...editRequest } = mapTransactionFormToRequest(form);
+  // Installment data is fixed at creation; the list only has "3/12", which must not be sent back.
+  const { numberOfInstallment, dateOfInstallment, date, ...editRequest } = mapTransactionFormToRequest(form);
   return editRequest;
 }
 
@@ -131,6 +132,21 @@ export const transactionFormSchema = z.object({
   date: z.string().optional(),
 });
 
+// The list shows recurrence as a label; the form select and the API use codes.
+const RECURRENCE_CODE_BY_LABEL: Record<string, string> = {
+  Não: "NONE",
+  Diário: "DAILY",
+  Quinzenal: "BIWEEKLY",
+  Mensal: "MONTHLY",
+  Ocasionalmente: "OCCASIONALLY",
+};
+
+function toRecurrenceCode(value: string | null | undefined): string {
+  if (value == null) return "NONE";
+  if (value === "-") return "";
+  return RECURRENCE_CODE_BY_LABEL[value] ?? value;
+}
+
 export function mapTransactionResponseToForm(transaction: TransactionResponse): TransactionForm {
   return {
     ...transactionFormDefaults,
@@ -143,7 +159,7 @@ export function mapTransactionResponseToForm(transaction: TransactionResponse): 
     paid: transaction.paid === true ? "Sim" : transaction.paid === false ? "Não" : "",
     numberOfInstallment: transaction.quantityOfInstallment ?? "",
     dateOfInstallment: transaction.dateOfInstallment ?? "",
-    recurrence: transaction.recurrence ?? "NONE",
+    recurrence: toRecurrenceCode(transaction.recurrence),
     contactName: transaction.contact?.name ?? "",
     date: transaction.date,
     id: transaction.id,

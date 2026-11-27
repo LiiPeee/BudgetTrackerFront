@@ -494,6 +494,9 @@
   "errors": {
     "emailInvalid": "Email inválido.",
     "passwordInvalid": "Senha incorreta.",
+    "invalidCredentials": "Email ou senha incorretos.",
+    "accountLocked": "Conta bloqueada por excesso de tentativas. Tente novamente em 15 minutos.",
+    "invalidResetCode": "Código inválido ou expirado.",
     "accountInactive": "Conta inativa. Entre em contato com o suporte.",
     "emailNotVerified": "Email ainda não verificado. Verifique sua caixa de entrada.",
     "accountNotFound": "Conta não encontrada.",

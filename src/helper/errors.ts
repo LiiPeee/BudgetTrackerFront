@@ -1,8 +1,7 @@
 import i18n from "@/i18n";
 
 // Códigos de erro estáveis expostos pelo backend (GlobalExceptionMiddleware).
-// O frontend traduz pelo código primeiro; o `includes` sobre a mensagem em inglês
-// fica apenas como fallback para erros antigos/inesperados.
+// O código é usado quando a mensagem em inglês não é reconhecida.
 const backendErrorCodes: Record<string, string> = {
   bad_request: "somethingWrong",
   unauthorized: "unauthorized",
@@ -14,6 +13,10 @@ const backendErrorCodes: Record<string, string> = {
 const backendErrorKeys: Record<string, string> = {
   "email is invalid": "emailInvalid",
   "password is invalid": "passwordInvalid",
+  "invalid credentials": "invalidCredentials",
+  "temporarily locked": "accountLocked",
+  "invalid or expired reset code": "invalidResetCode",
+  "invalid token": "invalidResetCode",
   "account is not active": "accountInactive",
   "email is not verified": "emailNotVerified",
   "account not found": "accountNotFound",
@@ -35,15 +38,15 @@ const backendErrorKeys: Record<string, string> = {
 };
 
 export function translateBackendError(raw: string | undefined | null, fallback: string, code?: string | null): string {
-  if (code && backendErrorCodes[code]) return i18n.t(`errors:${backendErrorCodes[code]}`);
-
-  if (!raw?.trim()) return fallback;
-
-  const lower = raw.trim().toLowerCase();
+  // The message is more specific than the code: a wrong password and an expired session
+  // are both "unauthorized".
+  const lower = raw?.trim().toLowerCase() ?? "";
 
   for (const [needle, key] of Object.entries(backendErrorKeys)) {
-    if (lower === needle || lower.includes(needle)) return i18n.t(`errors:${key}`);
+    if (lower.includes(needle)) return i18n.t(`errors:${key}`);
   }
+
+  if (code && backendErrorCodes[code]) return i18n.t(`errors:${backendErrorCodes[code]}`);
 
   return fallback;
 }

@@ -494,6 +494,9 @@
   "errors": {
     "emailInvalid": "Invalid email.",
     "passwordInvalid": "Incorrect password.",
+    "invalidCredentials": "Incorrect email or password.",
+    "accountLocked": "Account locked after too many attempts. Try again in 15 minutes.",
+    "invalidResetCode": "Invalid or expired code.",
     "accountInactive": "Inactive account. Please contact support.",
     "emailNotVerified": "Email not verified yet. Check your inbox.",
     "accountNotFound": "Account not found.",
