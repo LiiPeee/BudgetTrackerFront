@@ -255,6 +255,7 @@
     "nothingToExport": "No transactions to export.",
     "exportDone": "Export complete!",
     "exportError": "Error exporting transactions.",
+    "loadError": "Could not load transactions.",
     "refreshSuccess": "Page updated successfully!",
     "refreshError": "Error updating the page!",
     "income": "Income",

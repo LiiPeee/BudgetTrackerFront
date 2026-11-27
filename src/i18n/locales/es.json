@@ -255,6 +255,7 @@
     "nothingToExport": "Ninguna transacción para exportar.",
     "exportDone": "¡Exportación completada!",
     "exportError": "Error al exportar transacciones.",
+    "loadError": "No fue posible cargar las transacciones.",
     "refreshSuccess": "¡Página actualizada con éxito!",
     "refreshError": "¡Error al actualizar la página!",
     "income": "Ingresos",
