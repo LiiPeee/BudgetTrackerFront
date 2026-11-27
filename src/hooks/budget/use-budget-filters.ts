@@ -1,4 +1,5 @@
-import { type BudgetLimit, getBudgetCategoryName } from "@/helper/budget";
+import { type BudgetLimit, getBudgetCategoryLabel, getBudgetCategoryName } from "@/helper/budget";
+import { toCategoryKey } from "@/helper/category";
 import { useClientPagination } from "@/hooks/use-client-pagination";
 import { useCallback, useMemo, useState } from "react";
 
@@ -27,9 +28,9 @@ export function useBudgetFilters(budgets: BudgetLimit[]): UseBudgetFiltersResult
   const filteredBudgets = useMemo(() => {
     const normalizedFilter = filterName.trim().toLowerCase();
     return budgets.filter((budget) => {
-      const categoryName = getBudgetCategoryName(budget);
-      const matchesName = !normalizedFilter || categoryName.toLowerCase().includes(normalizedFilter);
-      const matchesCategory = filterCategory === "all" || categoryName === filterCategory;
+      const matchesName = !normalizedFilter || getBudgetCategoryLabel(budget).toLowerCase().includes(normalizedFilter);
+      // O banco pode gravar "ALIMENTACAO" onde a lista usa "Alimentação".
+      const matchesCategory = filterCategory === "all" || toCategoryKey(getBudgetCategoryName(budget)) === toCategoryKey(filterCategory);
       return matchesName && matchesCategory;
     });
   }, [budgets, filterCategory, filterName]);

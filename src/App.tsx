@@ -2,9 +2,9 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QUERY_GC_TIME, QUERY_STALE_TIME } from "@/constants/query";
 import { HideValuesProvider } from "@/contexts/hide-values-context";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/query-client";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
@@ -22,22 +22,6 @@ const TransactionsList = lazy(() => import("./pages/TransactionsList"));
 const Stocks = lazy(() => import("./pages/Stocks"));
 const CdbHistory = lazy(() => import("./pages/CdbHistory"));
 const VerifyTokenEmail = lazy(() => import("./pages/VerifyTokenEmail"));
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: QUERY_STALE_TIME,
-      gcTime: QUERY_GC_TIME,
-      retry: 1,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-    },
-    mutations: {
-      // Repeating a failed POST can create the record twice.
-      retry: 0,
-    },
-  },
-});
 
 const NormalizeSlashes = () => {
   const location = useLocation();

@@ -1,5 +1,5 @@
 import type { BudgetLimit } from "@/helper/budget";
-import { getBudgetLimitsByAccountPage } from "@/services/budget";
+import { getBudgetLimitsByMonthYear } from "@/services/budget";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
@@ -7,10 +7,10 @@ import Budgets from "./Budgets";
 
 vi.mock("@/services/budget", () => ({
   createBudgetLimit: vi.fn(async () => undefined),
-  getBudgetLimitsByAccountPage: vi.fn(),
+  getBudgetLimitsByMonthYear: vi.fn(),
 }));
 
-const mockedGetBudgets = vi.mocked(getBudgetLimitsByAccountPage);
+const mockedGetBudgets = vi.mocked(getBudgetLimitsByMonthYear);
 
 const overBudget: BudgetLimit = {
   id: 1,

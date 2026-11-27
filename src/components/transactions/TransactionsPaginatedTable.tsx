@@ -1,6 +1,7 @@
 import { TableLoadingState } from "@/components/ui/async-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import {
   Pagination,
   PaginationContent,
@@ -13,7 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { formatDateOnly } from "@/helper/date";
 import { TRANSACTION_TYPE, type TransactionResponse } from "@/helper/transaction";
 import { formatBRL, RECURRENCE_LABEL_KEY } from "@/helper/utils";
-import { CircleCheck, CircleX, Pencil, ReceiptText, Trash2 } from "lucide-react";
+import { CircleCheck, CircleX, Pencil, ReceiptText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 const TABLE_COLUMN_COUNT = 10;
@@ -128,15 +129,12 @@ export function TransactionsPaginatedTable({
                         >
                           <Pencil className="w-4 h-4" />
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="rounded-full hover:scale-105 transition-transform"
-                          aria-label={t("deleteAria")}
-                          onClick={() => onDelete(transaction.id)}
-                        >
-                          <Trash2 className="w-4 h-4 text-destructive" />
-                        </Button>
+                        <ConfirmDeleteButton
+                          label={t("deleteAria")}
+                          title={t("confirmDeleteTitle")}
+                          description={t("confirmDeleteDescription", { name: transaction.name ?? "" })}
+                          onConfirm={() => onDelete(transaction.id)}
+                        />
                       </div>
                     </TableCell>
                   </TableRow>

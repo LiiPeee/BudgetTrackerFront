@@ -1,4 +1,5 @@
-import type { Category } from "@/helper/category";
+import { type Category, toCategoryKey } from "@/helper/category";
+import i18n from "@/i18n";
 import { getDefaultYearMonth, monthNames } from "@/helper/utils";
 import { z } from "zod";
 
@@ -113,6 +114,12 @@ export function summarizeBudgetAlerts(budgets: BudgetLimit[]): { over: number; w
 
 export function getBudgetCategoryName(budget: BudgetLimit, fallback = "Sem categoria"): string {
   return budget.categoryName?.trim() || budget.category?.name?.trim() || fallback;
+}
+
+/** Nome da categoria no idioma da tela; categorias fora da lista aparecem como vieram. */
+export function getBudgetCategoryLabel(budget: BudgetLimit, fallback?: string): string {
+  const name = getBudgetCategoryName(budget, fallback);
+  return i18n.t(`budgets:categories.${toCategoryKey(name)}`, { defaultValue: name });
 }
 
 export function parseBudgetAmount(value: number | string | undefined): number {

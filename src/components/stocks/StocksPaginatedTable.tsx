@@ -79,10 +79,10 @@ export function StocksPaginatedTable({
                   </TableCell>
                 </TableRow>
               ) : (
-                stocks.map((stock) => {
+                stocks.map((stock, index) => {
                   const positive = isPositive(stock.percentage);
                   return (
-                    <TableRow key={stock.ticker} className="table-row-lift">
+                    <TableRow key={`${stock.ticker}-${index}`} className="table-row-lift">
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <StockAvatar ticker={stock.ticker} />

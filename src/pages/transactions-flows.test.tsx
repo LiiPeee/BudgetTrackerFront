@@ -144,7 +144,12 @@ describe("transactions pages flows", () => {
     fireEvent.click(screen.getByLabelText("Editar transação"));
     expect(screen.getByText("Editar Transação")).toBeInTheDocument();
 
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
     fireEvent.click(screen.getByLabelText("Excluir transação"));
+
+    // Excluir pede confirmação antes de chamar a API.
+    expect(mockedDeleteTransactions).not.toHaveBeenCalled();
+    fireEvent.click(await screen.findByRole("button", { name: "Excluir" }));
 
     await waitFor(() => {
       expect(mockedDeleteTransactions).toHaveBeenCalledWith(baseTransaction.id);

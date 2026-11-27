@@ -23,8 +23,13 @@
     "hideValues": "Ocultar valores",
     "showValues": "Mostrar valores",
     "chartTotal": "Total",
-    "chartEmpty": "Ningún gasto registrado en este período",
-    "refreshData": "Actualizar datos"
+    "chartEmpty": "No hay movimientos en este período",
+    "refreshData": "Actualizar datos",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "moreCategories": "+{{value}} categorías — vea el informe completo",
+    "pageNotFound": "Página no encontrada",
+    "goHome": "Volver al inicio"
   },
   "auth": {
     "welcome": "Bienvenido",
@@ -125,7 +130,10 @@
     "budgetAlertTitle": "Atención a los presupuestos",
     "budgetAlert_one": "{{count}} presupuesto por encima del límite este mes.",
     "budgetAlert_other": "{{count}} presupuestos por encima del límite este mes.",
-    "viewBudgets": "Ver presupuestos"
+    "viewBudgets": "Ver presupuestos",
+    "summaryError": "No se pudieron cargar los totales del mes.",
+    "expenseChartError": "No se pudieron cargar los gastos por categoría.",
+    "incomeChartError": "No se pudieron cargar los ingresos por categoría."
   },
   "contacts": {
     "pageTitle": "Contactos",
@@ -170,7 +178,11 @@
     "saveError": "Error inesperado al guardar el contacto.",
     "deleteSuccess": "¡Contacto eliminado con éxito!",
     "deleteError": "Error inesperado al eliminar el contacto.",
-    "loadError": "Error al cargar los contactos."
+    "loadError": "Error al cargar los contactos.",
+    "editAria": "Editar contacto",
+    "deleteAria": "Eliminar contacto",
+    "confirmDeleteTitle": "¿Eliminar contacto?",
+    "confirmDeleteDescription": "\"{{name}}\" dejará de aparecer en los contactos. Sus transacciones se conservan."
   },
   "reports": {
     "pageTitle": "Informes",
@@ -266,7 +278,6 @@
     "balanceHint": "Ingresos menos gastos",
     "filters": "Filtros",
     "month": "Mes",
-    "allMonths": "Todos los meses",
     "year": "Año",
     "yearPlaceholder": "Ej: 2026",
     "allCategories": "Todas las categorías",
@@ -359,7 +370,18 @@
       "beneficios": "Beneficios",
       "salario": "Salario",
       "outros": "Otros"
-    }
+    },
+    "summaryError": "No se pudieron cargar los totales del mes.",
+    "createSuccess": "¡Transacción creada con éxito!",
+    "updateSuccess": "¡Transacción actualizada con éxito!",
+    "saveError": "Error inesperado al guardar la transacción.",
+    "deleteSuccess": "¡Transacción eliminada con éxito!",
+    "deleteError": "Error inesperado al eliminar la transacción.",
+    "paidSuccess": "¡Estado de pago actualizado con éxito!",
+    "paidError": "Error inesperado al actualizar el estado de pago.",
+    "typeRequired": "Seleccione también el tipo para filtrar.",
+    "confirmDeleteTitle": "¿Eliminar transacción?",
+    "confirmDeleteDescription": "\"{{name}}\" se eliminará. No se puede deshacer."
   },
   "validation": {
     "emailInvalid": "Correo inválido",
@@ -390,7 +412,13 @@
     "tickerRequired": "El ticker es obligatorio",
     "priceInvalid": "Precio inválido",
     "quantityInvalid": "Cantidad inválida",
-    "cdiRateInvalid": "La tasa CDI debe ser un número entre 0 y 500"
+    "cdiRateInvalid": "La tasa CDI debe ser un número entre 0 y 500",
+    "transactionNameMax": "Use como máximo 50 caracteres",
+    "subCategoryRequired": "La subcategoría es obligatoria",
+    "subCategoryMax": "Use como máximo 30 caracteres",
+    "descriptionMax": "Use como máximo 30 caracteres",
+    "installmentsInvalid": "Ingrese de 1 a 420 cuotas",
+    "installmentDayInvalid": "Ingrese un día del 1 al 31"
   },
   "stocks": {
     "pageTitle": "Mi Cartera",
@@ -435,7 +463,9 @@
     "assetTypeFixedIncome": "Renta Fija",
     "fixedIncomeTypeField": "Tipo de Renta Fija",
     "fixedIncomeTypePlaceholder": "Selecciona el tipo",
-    "viewHistoryAria": "Ver historial de rendimientos"
+    "viewHistoryAria": "Ver historial de rendimientos",
+    "createSuccess": "¡Activo guardado con éxito!",
+    "saveError": "Error inesperado al guardar el activo."
   },
   "cdiCalculator": {
     "pageTitle": "Historial del CDB",
@@ -516,6 +546,10 @@
     "notFound": "El recurso solicitado no fue encontrado.",
     "somethingWrong": "Ocurrió un error inesperado. Inténtalo de nuevo más tarde.",
     "contactNotFound": "Contacto no encontrado o sin permiso de acceso.",
-    "contactIdInvalid": "ID de contacto inválido."
+    "contactIdInvalid": "ID de contacto inválido.",
+    "contactExists": "Ya existe un contacto con ese nombre.",
+    "budgetExists": "Ya existe un presupuesto para esa categoría en ese mes.",
+    "priceInvalid": "El precio debe ser mayor que cero.",
+    "quantityInvalid": "La cantidad debe ser mayor que cero."
   }
 }

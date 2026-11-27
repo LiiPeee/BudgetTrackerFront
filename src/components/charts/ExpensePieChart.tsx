@@ -120,7 +120,7 @@ export function ExpensePieChart({ data, totalExpense, compact = false, layout = 
         ))}
         {compact && data.length > 5 && (
           <p className="text-xs text-muted-foreground text-center mt-1">
-            +{data.length - 5} categorias — veja o relatório completo
+            {t("moreCategories", { value: data.length - 5 })}
           </p>
         )}
       </div>

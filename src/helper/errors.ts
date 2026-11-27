@@ -35,6 +35,10 @@ const backendErrorKeys: Record<string, string> = {
   "something wrong happen": "somethingWrong",
   "contact not found or access denied": "contactNotFound",
   "contactid inválido": "contactIdInvalid",
+  "contact with this name already exists": "contactExists",
+  "budget already exists": "budgetExists",
+  "price must be greater than zero": "priceInvalid",
+  "quantity must be greater than zero": "quantityInvalid",
 };
 
 export function translateBackendError(raw: string | undefined | null, fallback: string, code?: string | null): string {

@@ -10,6 +10,7 @@
  * refreshToken no corpo, recebendo um novo par (o backend faz rotação do token).
  */
 import type { AuthResponse } from "@/helper/auth";
+import { queryClient } from "@/lib/query-client";
 
 const ACCESS_TOKEN_KEY = "accessToken";
 const REFRESH_TOKEN_KEY = "refreshToken";
@@ -49,6 +50,7 @@ export function setSession(auth: AuthResponse): void {
 }
 
 export function clearAuth(): void {
+  queryClient.clear();
   sessionStorage.removeItem(ACCESS_TOKEN_KEY);
   sessionStorage.removeItem(REFRESH_TOKEN_KEY);
   for (const key of LEGACY_SESSIONSTORAGE_KEYS) {

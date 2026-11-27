@@ -6,7 +6,7 @@ import { FormTextField } from "@/components/ui/form-text-field";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { toCategoryKey } from "@/helper/category";
 import type { Contact } from "@/helper/contact";
-import { type TransactionForm, transactionFormSchema } from "@/helper/transaction";
+import { newTransactionFormSchema, type TransactionForm, transactionFormSchema } from "@/helper/transaction";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useEffect } from "react";
@@ -36,10 +36,16 @@ export function TransactionFormDialog({
 }: TransactionFormDialogProps) {
   const { t } = useTranslation("transactions");
   const form = useForm<TransactionForm>({
-    resolver: zodResolver(transactionFormSchema),
+    resolver: zodResolver(editingTransaction ? transactionFormSchema : newTransactionFormSchema),
     defaultValues,
   });
   const { isSubmitting } = form.formState;
+
+  const contactNames = contacts.map((contact) => contact.name ?? "");
+  // Um contato excluído continua selecionável na transação que já o usa.
+  if (editingTransaction && defaultValues.contactName && !contactNames.includes(defaultValues.contactName)) {
+    contactNames.push(defaultValues.contactName);
+  }
 
   useEffect(() => {
     if (open) form.reset(defaultValues);
@@ -88,7 +94,7 @@ export function TransactionFormDialog({
               name="contactName"
               label={t("fieldContact")}
               placeholder={t("select")}
-              options={contacts.map((contact) => ({ value: contact.name ?? "", label: contact.name ?? "" }))}
+              options={contactNames.map((name) => ({ value: name, label: name }))}
             />
 
             {!editingTransaction && (

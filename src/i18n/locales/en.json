@@ -23,8 +23,13 @@
     "hideValues": "Hide values",
     "showValues": "Show values",
     "chartTotal": "Total",
-    "chartEmpty": "No expenses recorded in this period",
-    "refreshData": "Refresh data"
+    "chartEmpty": "No entries in this period",
+    "refreshData": "Refresh data",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "moreCategories": "+{{value}} categories — see the full report",
+    "pageNotFound": "Page not found",
+    "goHome": "Return to home"
   },
   "auth": {
     "welcome": "Welcome",
@@ -125,7 +130,10 @@
     "budgetAlertTitle": "Budget warning",
     "budgetAlert_one": "{{count}} budget over its limit this month.",
     "budgetAlert_other": "{{count}} budgets over their limit this month.",
-    "viewBudgets": "View budgets"
+    "viewBudgets": "View budgets",
+    "summaryError": "Could not load the month totals.",
+    "expenseChartError": "Could not load expenses by category.",
+    "incomeChartError": "Could not load income by category."
   },
   "contacts": {
     "pageTitle": "Contacts",
@@ -170,7 +178,11 @@
     "saveError": "Unexpected error saving the contact.",
     "deleteSuccess": "Contact deleted successfully!",
     "deleteError": "Unexpected error deleting the contact.",
-    "loadError": "Error loading contacts."
+    "loadError": "Error loading contacts.",
+    "editAria": "Edit contact",
+    "deleteAria": "Delete contact",
+    "confirmDeleteTitle": "Delete contact?",
+    "confirmDeleteDescription": "\"{{name}}\" will no longer appear in your contacts. Its transactions are kept."
   },
   "reports": {
     "pageTitle": "Reports",
@@ -266,7 +278,6 @@
     "balanceHint": "Income minus expenses",
     "filters": "Filters",
     "month": "Month",
-    "allMonths": "All months",
     "year": "Year",
     "yearPlaceholder": "e.g. 2026",
     "allCategories": "All categories",
@@ -359,7 +370,18 @@
       "beneficios": "Benefits",
       "salario": "Salary",
       "outros": "Others"
-    }
+    },
+    "summaryError": "Could not load the month totals.",
+    "createSuccess": "Transaction created successfully!",
+    "updateSuccess": "Transaction updated successfully!",
+    "saveError": "Unexpected error saving the transaction.",
+    "deleteSuccess": "Transaction deleted successfully!",
+    "deleteError": "Unexpected error deleting the transaction.",
+    "paidSuccess": "Payment status updated successfully!",
+    "paidError": "Unexpected error updating the payment status.",
+    "typeRequired": "Also select the type to filter.",
+    "confirmDeleteTitle": "Delete transaction?",
+    "confirmDeleteDescription": "\"{{name}}\" will be deleted. This cannot be undone."
   },
   "validation": {
     "emailInvalid": "Invalid email",
@@ -390,7 +412,13 @@
     "tickerRequired": "Ticker is required",
     "priceInvalid": "Invalid price",
     "quantityInvalid": "Invalid quantity",
-    "cdiRateInvalid": "CDI rate must be a number between 0 and 500"
+    "cdiRateInvalid": "CDI rate must be a number between 0 and 500",
+    "transactionNameMax": "Use at most 50 characters",
+    "subCategoryRequired": "Subcategory is required",
+    "subCategoryMax": "Use at most 30 characters",
+    "descriptionMax": "Use at most 30 characters",
+    "installmentsInvalid": "Enter 1 to 420 installments",
+    "installmentDayInvalid": "Enter a day from 1 to 31"
   },
   "stocks": {
     "pageTitle": "My Portfolio",
@@ -435,7 +463,9 @@
     "assetTypeFixedIncome": "Fixed Income (Fixed Income)",
     "fixedIncomeTypeField": "Fixed Income Type",
     "fixedIncomeTypePlaceholder": "Select the type",
-    "viewHistoryAria": "View earnings history"
+    "viewHistoryAria": "View earnings history",
+    "createSuccess": "Asset saved successfully!",
+    "saveError": "Unexpected error saving the asset."
   },
   "cdiCalculator": {
     "pageTitle": "CDB History",
@@ -516,6 +546,10 @@
     "notFound": "The requested resource was not found.",
     "somethingWrong": "An unexpected error occurred. Please try again later.",
     "contactNotFound": "Contact not found or access denied.",
-    "contactIdInvalid": "Invalid contact ID."
+    "contactIdInvalid": "Invalid contact ID.",
+    "contactExists": "A contact with this name already exists.",
+    "budgetExists": "There is already a budget for this category in that month.",
+    "priceInvalid": "The price must be greater than zero.",
+    "quantityInvalid": "The quantity must be greater than zero."
   }
 }

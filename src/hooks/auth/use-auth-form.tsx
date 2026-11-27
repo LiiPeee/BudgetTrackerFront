@@ -1,5 +1,6 @@
 import { SignInRequest, SignUpRequest } from "@/helper/auth";
 import { getErrorMessage, setSession } from "@/lib/api";
+import { queryClient } from "@/lib/query-client";
 import { forgotPassword, logOut, resetPassword, signIn, signInWithGoogle, signUp, validateResetCode, verifyToken } from "@/services/auth";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -34,6 +35,7 @@ export function useAuthForm() {
         setIsLoading(true);
         const response = await signIn(data);
 
+        queryClient.clear();
         setSession(response);
 
         toast({ title: t("toast.loginSuccess") });
@@ -57,6 +59,7 @@ export function useAuthForm() {
         setIsLoading(true);
         const response = await signInWithGoogle(idToken);
 
+        queryClient.clear();
         setSession(response);
 
         toast({ title: t("toast.loginSuccess") });

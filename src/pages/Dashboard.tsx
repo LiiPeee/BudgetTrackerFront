@@ -11,7 +11,6 @@ import { RefreshAllButton } from "@/components/ui/RefreshAll";
 import { TRANSACTION_CATEGORY_OPTIONS } from "@/constants/transaction-categories";
 import { useHideValues } from "@/contexts/hide-values-context";
 import { summarizeBudgetAlerts } from "@/helper/budget";
-import type { TransactionForm } from "@/helper/transaction";
 import { formatBRLMasked } from "@/helper/utils";
 import { useBudgetAlerts } from "@/hooks/budget/use-budget-alerts";
 import { useContact } from "@/hooks/contact/use-contact";
@@ -36,6 +35,7 @@ const Dashboard = () => {
     incomeMonthTotal,
     economyMonthTotal,
     refetch: refetchSummary,
+    hasError: hasSummaryError,
   } = useFinancialSummary(month, year);
   const {
     isLoading: isLoadingChart,
@@ -66,11 +66,6 @@ const Dashboard = () => {
     await Promise.all([refetchSummary(), refetchExpenseChart(), refetchIncomeChart()]);
   }
 
-  async function handleSubmitAndRefresh(data: TransactionForm) {
-    await submitTransaction(data);
-    void handleRefresh();
-  }
-
   return (
     <div className="page-shell">
       <Header />
@@ -85,7 +80,7 @@ const Dashboard = () => {
             open={isDialogOpen}
             onOpenChange={onOpenChange}
             onPrepareNew={() => void getAllContact()}
-            onSubmit={handleSubmitAndRefresh}
+            onSubmit={submitTransaction}
             contacts={contacts}
             editingTransaction={editingTransaction}
             defaultValues={transactionDefaults}
@@ -114,7 +109,9 @@ const Dashboard = () => {
           </Alert>
         ) : null}
 
-        <div data-tour="summary-cards" className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+        {hasSummaryError ? <ErrorStateCard message={t("summaryError")} onRetry={handleRefresh} className="mb-8" /> : null}
+
+        <div data-tour="summary-cards" className={hasSummaryError ? "hidden" : "grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8"}>
           <Card className="rounded-2xl reveal-up stagger-1 overflow-hidden border-success/20 bg-gradient-to-br from-success/5 to-success/10">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{t("income")}</CardTitle>

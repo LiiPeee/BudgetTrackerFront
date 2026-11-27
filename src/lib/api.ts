@@ -1,5 +1,6 @@
 import type { AuthResponse } from "@/helper/auth";
 import { translateBackendError } from "@/helper/errors";
+import i18n from "@/i18n";
 import { clearAuth, getAccessToken, getRefreshToken, setSession } from "@/lib/token-store";
 
 // Re-export da fonte única de token, para manter a superfície pública estável.
@@ -118,7 +119,19 @@ type ApiErrorBody = {
   code?: string;
 };
 
+/** Erro cuja mensagem já é específica e está no idioma da tela. */
+export class ApiError extends Error {}
+
+async function toError(response: Response, fallback: string): Promise<Error> {
+  const message = await getResponseErrorMessage(response, fallback);
+  const isSpecific = message !== fallback && message !== i18n.t("errors:somethingWrong");
+  return isSpecific ? new ApiError(message) : new Error(message);
+}
+
 export function getErrorMessage(error: unknown, fallback: string): string {
+  // Traduzir de novo uma mensagem já traduzida a descartaria em favor do texto genérico.
+  if (error instanceof ApiError) return error.message;
+
   const typed = error as ApiErrorLike;
   const raw = typed?.response?.data?.error?.message ?? typed?.response?.data?.message ?? typed?.message;
   const code = typed?.response?.data?.error?.code ?? typed?.response?.data?.code;
@@ -137,7 +150,7 @@ export async function getResponseErrorMessage(response: Response, fallback: stri
 
 export async function readJsonOrThrow<T>(response: Response, fallbackMessage: string): Promise<T> {
   if (!response.ok) {
-    throw new Error(await getResponseErrorMessage(response, fallbackMessage));
+    throw await toError(response, fallbackMessage);
   }
 
   return (await response.json()) as T;
@@ -193,7 +206,7 @@ export async function getJson<T>(path: string, params?: QueryParams, fallback = 
 
 export async function del(path: string, params?: QueryParams, fallback = DEFAULT_FALLBACK): Promise<void> {
   const response = await request({ method: "DELETE", path, params });
-  if (!response.ok) throw new Error(await getResponseErrorMessage(response, fallback));
+  if (!response.ok) throw await toError(response, fallback);
 }
 
 export async function postJson<T>(path: string, body?: unknown, options: WriteOptions = {}): Promise<T> {
@@ -203,10 +216,10 @@ export async function postJson<T>(path: string, body?: unknown, options: WriteOp
 
 export async function postVoid(path: string, body?: unknown, options: WriteOptions = {}): Promise<void> {
   const response = await request({ method: "POST", path, body, params: options.params, auth: options.auth });
-  if (!response.ok) throw new Error(await getResponseErrorMessage(response, options.fallback ?? DEFAULT_FALLBACK));
+  if (!response.ok) throw await toError(response, options.fallback ?? DEFAULT_FALLBACK);
 }
 
 export async function patchVoid(path: string, body?: unknown, options: WriteOptions = {}): Promise<void> {
   const response = await request({ method: "PATCH", path, body, params: options.params, auth: options.auth });
-  if (!response.ok) throw new Error(await getResponseErrorMessage(response, options.fallback ?? DEFAULT_FALLBACK));
+  if (!response.ok) throw await toError(response, options.fallback ?? DEFAULT_FALLBACK);
 }

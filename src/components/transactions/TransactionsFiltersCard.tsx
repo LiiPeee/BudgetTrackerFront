@@ -61,7 +61,6 @@ export function TransactionsFiltersCard({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t("allMonths")}</SelectItem>
                 {monthNames.map((monthName, index) => (
                   <SelectItem key={monthName} value={monthName}>
                     {localizedMonths[index]}

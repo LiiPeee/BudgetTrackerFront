@@ -1,9 +1,9 @@
 import { resolveQueryPeriod, type TransactionListQuery } from "@/hooks/transaction/use-get-transactions";
-import { monthNames } from "@/helper/utils";
+import { toCategoryKey } from "@/helper/category";
+import { getDefaultYearMonth, monthNames } from "@/helper/utils";
+import i18n from "@/i18n";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
-
-const TYPE_REQUIRED_MESSAGE = "Selecione também o tipo para filtrar.";
 
 type ActiveQueryKind =
   | { kind: "all" }
@@ -67,15 +67,16 @@ export interface UseTransactionFiltersResult {
 }
 
 export function useTransactionFilters(preset?: TransactionFilterPreset): UseTransactionFiltersResult {
-  const [filterCategory, setFilterCategory] = useState<string>(preset?.kind === "categoryType" ? preset.category : "all");
+  const [filterCategory, setFilterCategory] = useState<string>(preset?.kind === "categoryType" ? toCategoryKey(preset.category).toUpperCase() : "all");
   const [filterType, setFilterType] = useState<string>(preset && "typeName" in preset ? preset.typeName : "all");
   const [filterContact, setFilterContact] = useState<string>(preset?.kind === "contactType" ? preset.contactId : "all");
   const [filterPaid, setFilterPaid] = useState<string>("all");
   const [filterInstallments, setFilterInstallments] = useState<string>(preset?.kind === "installments" ? "true" : "all");
   const [activeQueryKind, setActiveQueryKind] = useState<ActiveQueryKind>(() => preset ?? { kind: "all" });
   const [currentPage, setCurrentPage] = useState(1);
-  const [month, setMonth] = useState<string>(() => (preset ? monthNames[preset.period.month - 1] : "all"));
-  const [year, setYear] = useState<string>(() => (preset ? String(preset.period.year) : ""));
+  const initialPeriod = preset?.period ?? getDefaultYearMonth();
+  const [month, setMonth] = useState<string>(() => monthNames[initialPeriod.month - 1]);
+  const [year, setYear] = useState<string>(() => String(initialPeriod.year));
 
   const [activePeriod, setActivePeriod] = useState<{ month: number; year: number }>(() =>
     preset ? preset.period : resolveQueryPeriod("all", ""),
@@ -131,7 +132,7 @@ export function useTransactionFilters(preset?: TransactionFilterPreset): UseTran
 
     if (filterInstallments !== "all") {
       if (filterType === "all") {
-        toast.error(TYPE_REQUIRED_MESSAGE);
+        toast.error(i18n.t("transactions:typeRequired"));
         return;
       }
       setFilterCategory("all");
@@ -148,6 +149,8 @@ export function useTransactionFilters(preset?: TransactionFilterPreset): UseTran
 
     if (filterContact !== "all" && filterType !== "all") {
       setFilterPaid("all");
+      // A API não combina contato e categoria; o seletor não pode fingir que combina.
+      setFilterCategory("all");
       commit({ kind: "contactType", contactId: filterContact, typeName: filterType });
       return;
     }
@@ -164,7 +167,7 @@ export function useTransactionFilters(preset?: TransactionFilterPreset): UseTran
       return;
     }
 
-    toast.error(TYPE_REQUIRED_MESSAGE);
+    toast.error(i18n.t("transactions:typeRequired"));
   }, [month, year, filterPaid, filterInstallments, filterCategory, filterType, filterContact]);
 
   const goToPage = useCallback((page: number) => setCurrentPage(page), []);

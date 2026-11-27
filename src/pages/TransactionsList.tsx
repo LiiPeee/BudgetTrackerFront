@@ -67,6 +67,8 @@ const TransactionsList = () => {
     incomeMonthTotal,
     economyMonthTotal,
     isFetching: isSummaryFetching,
+    hasError: hasSummaryError,
+    refetch: refetchSummary,
   } = useFinancialSummary(activePeriod.month, activePeriod.year);
 
   const {
@@ -152,6 +154,8 @@ const TransactionsList = () => {
           incomeMonthTotal={incomeMonthTotal}
           expenseMonthTotal={expenseMonthTotal}
           economyMonthTotal={economyMonthTotal}
+          hasError={hasSummaryError}
+          onRetry={() => void refetchSummary()}
         />
 
         <div className="flex flex-wrap items-center gap-3">
