@@ -33,7 +33,8 @@ const queryClient = new QueryClient({
       refetchOnMount: false,
     },
     mutations: {
-      retry: 1,
+      // Repeating a failed POST can create the record twice.
+      retry: 0,
     },
   },
 });

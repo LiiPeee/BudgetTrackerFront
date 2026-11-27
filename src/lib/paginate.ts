@@ -1,8 +1,11 @@
 type PagedLike<T> = { items?: Array<T | null>; pageSize?: number; totalRecords?: number };
 
+const PAGE_CONCURRENCY = 3;
+
 /**
  * Fetches every page of a paginated endpoint and returns the flattened, non-null items.
- * Page 1 is fetched first to learn the total; the remaining pages run concurrently.
+ * Page 1 is fetched first to learn the total; the remaining pages run in small batches
+ * so a large list does not burst past the API rate limit.
  * Defends against missing/zero pageSize or totalRecords (no division-by-zero, no runaway).
  */
 export async function fetchAllPages<T>(fetchPage: (page: number) => Promise<PagedLike<T>>): Promise<T[]> {
@@ -15,6 +18,10 @@ export async function fetchAllPages<T>(fetchPage: (page: number) => Promise<Page
 
   if (totalPages === 1) return items;
 
-  const remaining = await Promise.all(Array.from({ length: totalPages - 1 }, (_, index) => fetchPage(index + 2)));
-  return [...items, ...remaining.flatMap(collect)];
+  for (let start = 2; start <= totalPages; start += PAGE_CONCURRENCY) {
+    const size = Math.min(PAGE_CONCURRENCY, totalPages - start + 1);
+    const batch = await Promise.all(Array.from({ length: size }, (_, index) => fetchPage(start + index)));
+    items.push(...batch.flatMap(collect));
+  }
+  return items;
 }

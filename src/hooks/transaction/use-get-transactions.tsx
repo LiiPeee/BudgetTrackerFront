@@ -66,7 +66,7 @@ export function resolveQueryPeriod(monthStr: string, yearStr: string): { month: 
 }
 
 export function useTransactionsList(query: TransactionListQuery, page: number) {
-  const { data, isLoading, isFetching, refetch } = useQuery({
+  const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["transactions", "list", query, page],
     queryFn: () => fetchTransactions(query, page),
     staleTime: QUERY_STALE_TIME,
@@ -94,6 +94,7 @@ export function useTransactionsList(query: TransactionListQuery, page: number) {
     totalPages,
     isLoading,
     isRefreshing: isFetching,
+    error,
     refetch,
   };
 }

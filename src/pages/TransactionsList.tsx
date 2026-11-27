@@ -4,6 +4,7 @@ import { TransactionFormDialog } from "@/components/transactions/TransactionForm
 import { TransactionsFiltersCard } from "@/components/transactions/TransactionsFiltersCard";
 import { TransactionsPaginatedTable } from "@/components/transactions/TransactionsPaginatedTable";
 import { TransactionsSummaryCards } from "@/components/transactions/TransactionsSummaryCards";
+import { ErrorStateCard } from "@/components/ui/async-state";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { RefreshAllButton } from "@/components/ui/RefreshAll";
 import { TRANSACTION_CATEGORY_OPTIONS } from "@/constants/transaction-categories";
@@ -16,6 +17,7 @@ import { useTransaction } from "@/hooks/transaction/use-create-transaction";
 import { useFinancialSummary } from "@/hooks/transaction/use-financial-summary";
 import { fetchAllTransactions, useTransactionsList } from "@/hooks/transaction/use-get-transactions";
 import { isTransactionFilterPreset, useTransactionFilters } from "@/hooks/transaction/use-transaction-filters";
+import { getErrorMessage } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { Download } from "lucide-react";
 import { useState } from "react";
@@ -74,6 +76,8 @@ const TransactionsList = () => {
     totalRecords,
     pageSize,
     isRefreshing,
+    error: listError,
+    refetch: refetchList,
   } = useTransactionsList(transactionQuery, currentPage);
 
   const handleRefresh = async () => {
@@ -186,18 +190,22 @@ const TransactionsList = () => {
           />
         </div>
 
-        <TransactionsPaginatedTable
-          transactions={transactions}
-          currentPage={serverPage}
-          totalPages={totalPages}
-          totalRecords={totalRecords}
-          pageSize={pageSize}
-          isLoading={isRefreshing}
-          onPageChange={goToPage}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onTogglePaid={handleTogglePaid}
-        />
+        {listError ? (
+          <ErrorStateCard message={getErrorMessage(listError, t("loadError"))} onRetry={() => void refetchList()} className="min-h-40" />
+        ) : (
+          <TransactionsPaginatedTable
+            transactions={transactions}
+            currentPage={serverPage}
+            totalPages={totalPages}
+            totalRecords={totalRecords}
+            pageSize={pageSize}
+            isLoading={isRefreshing}
+            onPageChange={goToPage}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onTogglePaid={handleTogglePaid}
+          />
+        )}
       </main>
     </div>
   );
