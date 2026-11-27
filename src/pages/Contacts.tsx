@@ -3,11 +3,12 @@ import { Header } from "@/components/layout/Header";
 import { TableLoadingState } from "@/components/ui/async-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import { RefreshAllButton } from "@/components/ui/RefreshAll";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { maskPhone } from "@/helper/utils";
 import { useContact } from "@/hooks/contact/use-contact";
-import { Inbox, Pencil, Trash2 } from "lucide-react";
+import { Inbox, Pencil } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 const Contacts = () => {
@@ -86,18 +87,17 @@ const Contacts = () => {
                               variant="ghost"
                               size="icon"
                               className="rounded-full hover:scale-105 transition-transform"
+                              aria-label={t("editAria")}
                               onClick={() => handleEdit(contact)}
                             >
                               <Pencil className="w-4 h-4" />
                             </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="rounded-full hover:scale-105 transition-transform"
-                              onClick={() => contact.id && handleDelete(contact.id)}
-                            >
-                              <Trash2 className="w-4 h-4 text-destructive" />
-                            </Button>
+                            <ConfirmDeleteButton
+                              label={t("deleteAria")}
+                              title={t("confirmDeleteTitle")}
+                              description={t("confirmDeleteDescription", { name: contact.name ?? "" })}
+                              onConfirm={() => contact.id && void handleDelete(contact.id)}
+                            />
                           </div>
                         </TableCell>
                       </TableRow>

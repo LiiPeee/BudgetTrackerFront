@@ -1,4 +1,5 @@
-import { Category } from "@/helper/category";
+import { TRANSACTION_CATEGORY_OPTIONS } from "@/constants/transaction-categories";
+import { type Category, toCategoryKey } from "@/helper/category";
 import { Contact } from "@/helper/contact";
 import { z } from "zod";
 
@@ -116,21 +117,38 @@ export function mapTransactionFormToEditRequest(form: TransactionForm): EditTran
   return editRequest;
 }
 
+const optionalIntegerBetween = (min: number, max: number, message: string) =>
+  z.string().refine((value) => {
+    const number = Number(value);
+    return value.trim() === "" || (Number.isInteger(number) && number >= min && number <= max);
+  }, message);
+
+// Os limites repetem os do backend, para o erro aparecer no campo.
 export const transactionFormSchema = z.object({
   id: z.number(),
-  transactionName: z.string().trim().min(1, "validation:transactionNameRequired"),
-  subCategory: z.string(),
+  transactionName: z.string().trim().min(1, "validation:transactionNameRequired").max(50, "validation:transactionNameMax"),
+  subCategory: z.string().trim().min(1, "validation:subCategoryRequired").max(30, "validation:subCategoryMax"),
   numberOfInstallment: z.string(),
   dateOfInstallment: z.string(),
   paid: z.enum(["", "Sim", "Não"]).refine((value) => value !== "", "validation:paymentStatusRequired"),
   contactName: z.string().trim().min(1, "validation:contactRequired"),
   recurrence: z.string().min(1, "validation:recurrenceRequired"),
-  description: z.string(),
-  amount: z.string().refine((value) => value.trim() !== "" && !Number.isNaN(Number(value)), "validation:amountInvalid"),
+  description: z.string().trim().max(30, "validation:descriptionMax"),
+  amount: z.string().refine((value) => Number(value) > 0 && Number(value) <= 999999.99, "validation:amountInvalid"),
   type: z.enum(["Income", "Expense"]),
   category: z.string().trim().min(1, "validation:categoryRequired"),
   date: z.string().optional(),
 });
+
+export const newTransactionFormSchema = transactionFormSchema.extend({
+  numberOfInstallment: optionalIntegerBetween(1, 420, "validation:installmentsInvalid"),
+  dateOfInstallment: optionalIntegerBetween(1, 31, "validation:installmentDayInvalid"),
+});
+
+// A API devolve o nome como está no banco; o formulário usa o da lista de opções.
+function toCategoryOption(name: string): string {
+  return TRANSACTION_CATEGORY_OPTIONS.find((option) => toCategoryKey(option) === toCategoryKey(name)) ?? name;
+}
 
 // The list shows recurrence as a label; the form select and the API use codes.
 const RECURRENCE_CODE_BY_LABEL: Record<string, string> = {
@@ -152,7 +170,7 @@ export function mapTransactionResponseToForm(transaction: TransactionResponse): 
     ...transactionFormDefaults,
     transactionName: transaction.name ?? "",
     description: transaction.description ?? "",
-    category: transaction.category?.name ?? "",
+    category: toCategoryOption(transaction.category?.name ?? ""),
     subCategory: transaction.subCategory ?? "",
     amount: transaction.amount == null ? "" : String(transaction.amount),
     type: transaction.typeTransaction === TRANSACTION_TYPE.EXPENSE ? "Expense" : "Income",

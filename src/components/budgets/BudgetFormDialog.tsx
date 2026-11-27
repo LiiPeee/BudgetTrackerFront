@@ -18,9 +18,11 @@ type BudgetFormDialogProps = {
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: BudgetLimitForm) => Promise<void> | void;
   categoryOptions: readonly string[];
+  month: number;
+  year: number;
 };
 
-export function BudgetFormDialog({ open, onOpenChange, onSubmit, categoryOptions }: BudgetFormDialogProps) {
+export function BudgetFormDialog({ open, onOpenChange, onSubmit, categoryOptions, month, year }: BudgetFormDialogProps) {
   const { t, i18n } = useTranslation("budgets");
   const localizedMonths = getMonthNames(i18n.language);
   const form = useForm<BudgetLimitForm>({
@@ -30,8 +32,9 @@ export function BudgetFormDialog({ open, onOpenChange, onSubmit, categoryOptions
   const { isSubmitting } = form.formState;
 
   useEffect(() => {
-    if (open) form.reset(budgetFormDefaults);
-  }, [open, form]);
+    // Começa no mês que está sendo visto.
+    if (open) form.reset({ ...budgetFormDefaults, month: String(month), year: String(year) });
+  }, [open, form, month, year]);
 
   const handleOpenChange = (next: boolean) => {
     if (isSubmitting) return;

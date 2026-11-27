@@ -1,5 +1,5 @@
 import type { BudgetLimit, PagedBudgetLimitsResponse } from "@/helper/budget";
-import { createBudgetLimit, getBudgetLimitsByAccountPage } from "@/services/budget";
+import { createBudgetLimit, getBudgetLimitsByMonthYear } from "@/services/budget";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { ReactElement } from "react";
@@ -8,11 +8,11 @@ import Budgets from "./Budgets";
 
 vi.mock("@/services/budget", () => ({
   createBudgetLimit: vi.fn(async () => undefined),
-  getBudgetLimitsByAccountPage: vi.fn(),
+  getBudgetLimitsByMonthYear: vi.fn(),
 }));
 
 const mockedCreateBudgetLimit = vi.mocked(createBudgetLimit);
-const mockedGetBudgetLimitsByAccountPage = vi.mocked(getBudgetLimitsByAccountPage);
+const mockedGetBudgetLimitsByAccountPage = vi.mocked(getBudgetLimitsByMonthYear);
 
 const budgetItems: BudgetLimit[] = Array.from({ length: 11 }, (_, index) => ({
   id: index + 1,
@@ -70,7 +70,7 @@ describe("budgets page flows", () => {
     renderWithProviders(<Budgets />);
 
     await waitFor(() => {
-      expect(mockedGetBudgetLimitsByAccountPage).toHaveBeenCalledWith(1);
+      expect(mockedGetBudgetLimitsByAccountPage).toHaveBeenCalledWith(expect.any(Number), expect.any(Number), 1);
     });
 
     expect(await screen.findByText("Alimentação")).toBeInTheDocument();
@@ -103,7 +103,7 @@ describe("budgets page flows", () => {
     renderWithProviders(<Budgets />);
 
     await waitFor(() => {
-      expect(mockedGetBudgetLimitsByAccountPage).toHaveBeenCalledWith(1);
+      expect(mockedGetBudgetLimitsByAccountPage).toHaveBeenCalledWith(expect.any(Number), expect.any(Number), 1);
     });
 
     fireEvent.click(screen.getByRole("button", { name: "Novo Orçamento" }));
@@ -120,7 +120,7 @@ describe("budgets page flows", () => {
     renderWithProviders(<Budgets />);
 
     await waitFor(() => {
-      expect(mockedGetBudgetLimitsByAccountPage).toHaveBeenCalledWith(1);
+      expect(mockedGetBudgetLimitsByAccountPage).toHaveBeenCalledWith(expect.any(Number), expect.any(Number), 1);
     });
 
     fireEvent.click(screen.getByRole("button", { name: "Novo Orçamento" }));

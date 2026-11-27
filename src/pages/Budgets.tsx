@@ -1,6 +1,7 @@
 import { BudgetAlertsBanner } from "@/components/budgets/BudgetAlertsBanner";
 import { BudgetFormDialog } from "@/components/budgets/BudgetFormDialog";
 import { BudgetsPaginatedTable } from "@/components/budgets/BudgetsPaginatedTable";
+import { MonthNavigator } from "@/components/dashboard/MonthNavigator";
 import { Header } from "@/components/layout/Header";
 import { ErrorStateCard } from "@/components/ui/async-state";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { RefreshAllButton } from "@/components/ui/RefreshAll";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TRANSACTION_CATEGORY_OPTIONS } from "@/constants/transaction-categories";
+import { toCategoryKey } from "@/helper/category";
+import { useMonthNavigation } from "@/hooks/use-month-navigation";
 import { useBudgetFilters } from "@/hooks/budget/use-budget-filters";
 import { useBudgetLimits } from "@/hooks/budget/use-budget-limits";
 import { Filter, Search } from "lucide-react";
@@ -18,7 +21,8 @@ import { useTranslation } from "react-i18next";
 
 const Budgets = () => {
   const { t } = useTranslation("budgets");
-  const { budgets, error, isDialogOpen, isRefreshing, refetchBudgets, submitBudget, setIsDialogOpen } = useBudgetLimits();
+  const { month, year, label: monthLabel, goToPreviousMonth, goToNextMonth, goTo } = useMonthNavigation();
+  const { budgets, error, isDialogOpen, isRefreshing, refetchBudgets, submitBudget, setIsDialogOpen } = useBudgetLimits(month, year, goTo);
 
   useProductTour("budgets");
 
@@ -57,11 +61,16 @@ const Budgets = () => {
               onOpenChange={setIsDialogOpen}
               onSubmit={submitBudget}
               categoryOptions={TRANSACTION_CATEGORY_OPTIONS}
+              month={month}
+              year={year}
             />
           </div>
         </div>
 
-        <RefreshAllButton isRefreshing={isRefreshing} onRefresh={handleRefresh} />
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <MonthNavigator label={monthLabel} onPreviousMonth={goToPreviousMonth} onNextMonth={goToNextMonth} />
+          <RefreshAllButton isRefreshing={isRefreshing} onRefresh={handleRefresh} />
+        </div>
 
         <BudgetAlertsBanner budgets={budgets} />
 
@@ -98,7 +107,7 @@ const Budgets = () => {
                   <SelectItem value="all">{t("allCategories")}</SelectItem>
                   {TRANSACTION_CATEGORY_OPTIONS.map((category) => (
                     <SelectItem key={category} value={category}>
-                      {category}
+                      {t(`categories.${toCategoryKey(category)}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>

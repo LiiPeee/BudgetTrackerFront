@@ -50,6 +50,8 @@ export function useContact() {
 
       if (editingContact) {
         await editContactMutation.mutateAsync(contactPayload);
+        // As transações mostram o nome do contato.
+        void queryClient.invalidateQueries({ queryKey: ["transactions"] });
         toast.success(t("editSuccess"));
       } else {
         await createContactMutation.mutateAsync(contactPayload);

@@ -25,6 +25,8 @@ export function useFinancialSummary(month?: number, year?: number) {
 
   return {
     ...query,
+    // Sem dado nenhum, mostrar zeros pareceria um saldo real.
+    hasError: query.isError && !query.data,
     expenseMonthTotal: query.data?.expenseMonthTotal ?? 0,
     incomeMonthTotal: query.data?.incomeMonthTotal ?? 0,
     economyMonthTotal: query.data?.economyMonthTotal ?? 0,

@@ -9,6 +9,8 @@ export interface Contact {
   phone?: string;
   document?: string | null;
   typeContact?: string | number;
+  // Nome que a API usa na listagem.
+  typeContactId?: number;
   street?: string;
   city?: string;
   state?: string;
@@ -77,7 +79,8 @@ export function mapContactFormToRequest(form: ContactForm, id?: number): Contact
 }
 
 export function mapContactToForm(contact: Contact): ContactForm {
-  const typeContact = contact.typeContact == null ? "" : (String(contact.typeContact) as ContactTypeValue | "");
+  const rawType = contact.typeContactId ?? contact.typeContact;
+  const typeContact = rawType == null ? "" : (String(rawType) as ContactTypeValue | "");
 
   return {
     ...contactFormDefaults,

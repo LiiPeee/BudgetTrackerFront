@@ -6,14 +6,17 @@ import {
   mapTransactionResponseToForm,
   transactionFormDefaults,
 } from "@/helper/transaction";
+import { BUDGET_ALERTS_QUERY_KEY } from "@/hooks/budget/use-budget-alerts";
 import { BUDGET_LIMITS_QUERY_KEY } from "@/hooks/budget/use-budget-limits";
 import { getErrorMessage } from "@/lib/api";
 import { createTransaction, deleteTransactions, setTransactionPaid, updateTransaction } from "@/services/transaction";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 export function useTransaction() {
+  const { t } = useTranslation("transactions");
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<TransactionResponse | null>(null);
@@ -25,8 +28,9 @@ export function useTransaction() {
   );
 
   const invalidateTransactionQueries = useCallback(async () => {
-    await queryClient.invalidateQueries({ queryKey: ["transactions"], refetchType: "none" });
-    await queryClient.invalidateQueries({ queryKey: BUDGET_LIMITS_QUERY_KEY });
+    await Promise.all(
+      [["transactions"], BUDGET_LIMITS_QUERY_KEY, BUDGET_ALERTS_QUERY_KEY].map((queryKey) => queryClient.invalidateQueries({ queryKey })),
+    );
   }, [queryClient]);
 
   const onOpenChange = useCallback((open: boolean) => {
@@ -39,19 +43,19 @@ export function useTransaction() {
       try {
         if (editingTransaction) {
           await updateTransaction(editingTransaction.id, mapTransactionFormToEditRequest(data));
-          toast.success("Transação atualizada com sucesso!");
+          toast.success(t("updateSuccess"));
         } else {
           await createTransaction(mapTransactionFormToRequest(data));
-          toast.success("Transação criada com sucesso!");
+          toast.success(t("createSuccess"));
         }
         setIsDialogOpen(false);
         setEditingTransaction(null);
         void invalidateTransactionQueries();
       } catch (error: unknown) {
-        toast.error(getErrorMessage(error, "Erro inesperado ao salvar transação."));
+        toast.error(getErrorMessage(error, t("saveError")));
       }
     },
-    [editingTransaction, invalidateTransactionQueries],
+    [editingTransaction, invalidateTransactionQueries, t],
   );
 
   const handleEdit = useCallback((transaction: TransactionResponse) => {
@@ -64,12 +68,12 @@ export function useTransaction() {
       try {
         await deleteTransactions(id);
         await invalidateTransactionQueries();
-        toast.success("Transação excluída com sucesso!");
+        toast.success(t("deleteSuccess"));
       } catch (error: unknown) {
-        toast.error(getErrorMessage(error, "Erro inesperado ao excluir transação."));
+        toast.error(getErrorMessage(error, t("deleteError")));
       }
     },
-    [invalidateTransactionQueries],
+    [invalidateTransactionQueries, t],
   );
 
   const handleTogglePaid = useCallback(
@@ -77,12 +81,12 @@ export function useTransaction() {
       try {
         await setTransactionPaid(transaction.id, !transaction.paid);
         await invalidateTransactionQueries();
-        toast.success("Status de pagamento atualizado com sucesso!");
+        toast.success(t("paidSuccess"));
       } catch (error: unknown) {
-        toast.error(getErrorMessage(error, "Erro inesperado ao atualizar status de pagamento."));
+        toast.error(getErrorMessage(error, t("paidError")));
       }
     },
-    [invalidateTransactionQueries],
+    [invalidateTransactionQueries, t],
   );
 
   return {

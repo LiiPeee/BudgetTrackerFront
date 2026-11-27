@@ -1,5 +1,6 @@
 import { QUERY_STALE_TIME } from "@/constants/query";
 import { CHART_COLORS, type CategoryChartData } from "@/hooks/transaction/category-breakdown";
+import i18n from "@/i18n";
 import { fetchAllPages } from "@/lib/paginate";
 import { getAllFunds, getAllStocks } from "@/services/stock";
 import { useQuery } from "@tanstack/react-query";
@@ -31,8 +32,13 @@ async function computePortfolioAllocation() {
     // Renda fixa não tem cotação de mercado (priceMarket vem 0 do backend) — usa o preço de compra como valor atual.
     // TODO: usar calcCdiAccruedSummary (src/helper/cdi.ts) com cdiRate/investmentDate para refletir o rendimento acumulado,
     // em vez do valor de compra parado — hoje o total da carteira não cresce mesmo com o CDB rendendo.
-    const value = isFixedIncome ? asset.quantity * asset.priceBuyed : asset.quantity * asset.priceMarket;
-    (isFixedIncome ? rfEntries : rvEntries).push({ ticker: asset.ticker, total: value });
+    // Sem cotação (priceMarket 0), a posição vale o que custou, e não zero.
+    const unitPrice = !isFixedIncome && asset.priceMarket > 0 ? asset.priceMarket : asset.priceBuyed;
+    const entries = isFixedIncome ? rfEntries : rvEntries;
+    // Várias aplicações com o mesmo código formam uma fatia só.
+    const existing = entries.find((entry) => entry.ticker === asset.ticker);
+    if (existing) existing.total += asset.quantity * unitPrice;
+    else entries.push({ ticker: asset.ticker, total: asset.quantity * unitPrice });
   }
 
   const totalRV = rvEntries.reduce((sum, e) => sum + e.total, 0);
@@ -41,8 +47,8 @@ async function computePortfolioAllocation() {
 
   const overview: CategoryChartData[] = totalValue > 0
     ? [
-        { category: "Renda Variável", total: totalRV, percentage: (totalRV / totalValue) * 100, fill: CHART_COLORS[0] },
-        { category: "Renda Fixa", total: totalRF, percentage: (totalRF / totalValue) * 100, fill: CHART_COLORS[4] },
+        { category: i18n.t("stocks:rendaVariavelTitle"), total: totalRV, percentage: (totalRV / totalValue) * 100, fill: CHART_COLORS[0] },
+        { category: i18n.t("stocks:rendaFixaTitle"), total: totalRF, percentage: (totalRF / totalValue) * 100, fill: CHART_COLORS[4] },
       ].filter((e) => e.total > 0)
     : [];
 

@@ -1,3 +1,4 @@
+import { ErrorStateCard } from "@/components/ui/async-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useHideValues } from "@/contexts/hide-values-context";
 import { formatBRLMasked } from "@/helper/utils";
@@ -8,11 +9,18 @@ type TransactionsSummaryCardsProps = {
   incomeMonthTotal: number;
   expenseMonthTotal: number;
   economyMonthTotal: number;
+  hasError?: boolean;
+  onRetry?: () => void;
 };
 
-export function TransactionsSummaryCards({ incomeMonthTotal, expenseMonthTotal, economyMonthTotal }: TransactionsSummaryCardsProps) {
+export function TransactionsSummaryCards({ incomeMonthTotal, expenseMonthTotal, economyMonthTotal, hasError, onRetry }: TransactionsSummaryCardsProps) {
   const { t } = useTranslation("transactions");
   const { isHidden } = useHideValues();
+
+  if (hasError) {
+    return <ErrorStateCard message={t("summaryError")} onRetry={onRetry} className="mb-8" />;
+  }
+
   return (
     <div className="grid gap-6 md:grid-cols-3 mb-8">
       <Card className="surface-card rounded-2xl">

@@ -1,5 +1,5 @@
 import { getDefaultYearMonth, getMonthNames } from "@/helper/utils";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export type MonthNavigation = {
@@ -8,6 +8,7 @@ export type MonthNavigation = {
   label: string;
   goToPreviousMonth: () => void;
   goToNextMonth: () => void;
+  goTo: (month: number, year: number) => void;
 };
 
 export function useMonthNavigation(): MonthNavigation {
@@ -22,7 +23,10 @@ export function useMonthNavigation(): MonthNavigation {
     });
   }
 
+  const goTo = useCallback((nextMonth: number, nextYear: number) => setCursor({ month: nextMonth, year: nextYear }), []);
+
   return {
+    goTo,
     month,
     year,
     label: `${getMonthNames(i18n.language)[month - 1]} ${year}`,

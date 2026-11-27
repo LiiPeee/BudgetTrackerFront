@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { BudgetLimit, BudgetUsageStatus } from "@/helper/budget";
-import { getBudgetCategoryName, getBudgetUsageStatus, parseBudgetAmount, parseBudgetPercentage } from "@/helper/budget";
+import { getBudgetCategoryLabel, getBudgetCategoryName, getBudgetUsageStatus, parseBudgetAmount, parseBudgetPercentage } from "@/helper/budget";
 import { formatBRL, getMonthNames } from "@/helper/utils";
 import { PiggyBank } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -133,7 +133,7 @@ export function BudgetsPaginatedTable({
               ) : (
                 budgets.map((budget) => (
                   <TableRow key={`${budget.id ?? getBudgetCategoryName(budget)}-${budget.month}-${budget.year}`} className="table-row-lift">
-                    <TableCell className="font-medium">{getBudgetCategoryName(budget, t("noCategory"))}</TableCell>
+                    <TableCell className="font-medium">{getBudgetCategoryLabel(budget, t("noCategory"))}</TableCell>
                     <TableCell className="text-muted-foreground">{`${monthLabels[budget.month - 1] ?? budget.month}/${budget.year}`}</TableCell>
                     <TableCell className="text-right font-semibold tabular-nums">{formatBRL(Number(budget.limitAmount) || 0)}</TableCell>
                     <TableCell className="text-right tabular-nums">{formatBRL(parseBudgetAmount(budget.spentAmount))}</TableCell>
