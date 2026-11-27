@@ -35,11 +35,8 @@ export async function logOut(): Promise<void> {
 }
 
 export async function verifyToken(input: VerifyTokenRequest): Promise<void> {
-  await postVoid("/Auth/VerifyToken", undefined, {
-    ...PUBLIC,
-    params: { id: input.id, token: input.token },
-    fallback: "Código inválido ou expirado",
-  });
+  // Codes go in the body: query strings end up in server and proxy logs.
+  await postVoid("/Auth/VerifyToken", { id: input.id, token: input.token }, { ...PUBLIC, fallback: "Código inválido ou expirado" });
 }
 
 export async function forgotPassword(email: string): Promise<void> {
@@ -47,11 +44,7 @@ export async function forgotPassword(email: string): Promise<void> {
 }
 
 export async function validateResetCode(input: ValidateResetCodeRequest): Promise<void> {
-  await postVoid("/Auth/ValidateResetCode", input.token, {
-    ...PUBLIC,
-    params: { email: input.email },
-    fallback: "Código inválido ou expirado",
-  });
+  await postVoid("/Auth/ValidateResetCode", { email: input.email, token: input.token }, { ...PUBLIC, fallback: "Código inválido ou expirado" });
 }
 
 export async function resetPassword(input: ResetPasswordRequest): Promise<void> {
