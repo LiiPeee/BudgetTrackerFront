@@ -381,7 +381,9 @@
     "paidError": "Unexpected error updating the payment status.",
     "typeRequired": "Also select the type to filter.",
     "confirmDeleteTitle": "Delete transaction?",
-    "confirmDeleteDescription": "\"{{name}}\" will be deleted. This cannot be undone."
+    "confirmDeleteDescription": "\"{{name}}\" will be deleted. This cannot be undone.",
+    "fieldInstallmentAmount": "Installment amount",
+    "installmentTotal": "Total: {{installments}} installments of {{amount}} = {{total}}"
   },
   "validation": {
     "emailInvalid": "Invalid email",

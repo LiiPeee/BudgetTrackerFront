@@ -381,7 +381,9 @@
     "paidError": "Error inesperado al actualizar el estado de pago.",
     "typeRequired": "Seleccione también el tipo para filtrar.",
     "confirmDeleteTitle": "¿Eliminar transacción?",
-    "confirmDeleteDescription": "\"{{name}}\" se eliminará. No se puede deshacer."
+    "confirmDeleteDescription": "\"{{name}}\" se eliminará. No se puede deshacer.",
+    "fieldInstallmentAmount": "Valor de la cuota",
+    "installmentTotal": "Total: {{installments}} cuotas de {{amount}} = {{total}}"
   },
   "validation": {
     "emailInvalid": "Correo inválido",
