@@ -60,7 +60,7 @@ export interface StockForm {
   description: string;
   cdiRate: string;
   investmentDate: string;
-  isStock: string;
+  isStock: "true" | "false";
   fixedIncomeType: string;
 }
 
