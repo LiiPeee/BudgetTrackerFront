@@ -39,4 +39,22 @@ export default tseslint.config(
       "react-refresh/only-export-components": "off",
     },
   },
+  {
+    // Telas e regras dependem de src/platform/ports; só os adaptadores nativos usam o Capacitor.
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/platform/native/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@capacitor/*", "@capacitor-community/*", "@capawesome/*", "@capawesome-team/*"],
+              message: "Use a port from src/platform/ports; only src/platform/native may import Capacitor plugins.",
+            },
+          ],
+        },
+      ],
+    },
+  },
 );
