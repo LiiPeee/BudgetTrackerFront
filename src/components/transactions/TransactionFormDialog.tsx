@@ -6,7 +6,7 @@ import { FormTextField } from "@/components/ui/form-text-field";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { toCategoryKey } from "@/helper/category";
 import type { Contact } from "@/helper/contact";
-import { formatBRL } from "@/helper/utils";
+import { formatBRL, getMonthNames } from "@/helper/utils";
 import { getInstallmentSummary, newTransactionFormSchema, type TransactionForm, transactionFormSchema } from "@/helper/transaction";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
@@ -35,7 +35,7 @@ export function TransactionFormDialog({
   defaultValues,
   categoryOptions,
 }: TransactionFormDialogProps) {
-  const { t } = useTranslation("transactions");
+  const { t, i18n } = useTranslation("transactions");
   const form = useForm<TransactionForm>({
     resolver: zodResolver(editingTransaction ? transactionFormSchema : newTransactionFormSchema),
     defaultValues,
@@ -46,6 +46,15 @@ export function TransactionFormDialog({
   // Na edição altera-se um lançamento só, então não há total de parcelamento.
   const installmentSummary = editingTransaction ? null : getInstallmentSummary(amount, numberOfInstallment);
   const isInstallment = !editingTransaction && Number(numberOfInstallment) > 1;
+
+  // Qualquer parcelamento, mesmo de uma parcela, tem um mês de início a escolher.
+  const hasInstallments = !editingTransaction && Number(numberOfInstallment) >= 1;
+  const monthNames = getMonthNames(i18n.language);
+  const currentMonth = new Date().getMonth();
+  const firstInstallmentOptions = [
+    { value: "current", label: t("firstInstallmentCurrent", { month: monthNames[currentMonth].toLowerCase() }) },
+    { value: "next", label: t("firstInstallmentNext", { month: monthNames[(currentMonth + 1) % 12].toLowerCase() }) },
+  ];
 
   const contactNames = contacts.map((contact) => contact.name ?? "");
   // Um contato excluído continua selecionável na transação que já o usa.
@@ -107,6 +116,9 @@ export function TransactionFormDialog({
               <>
                 <FormTextField control={form.control} name="numberOfInstallment" label={t("fieldInstallments")} placeholder={t("fieldInstallmentsPlaceholder")} />
                 <FormTextField control={form.control} name="dateOfInstallment" label={t("fieldInstallmentDate")} placeholder={t("fieldInstallmentDatePlaceholder")} />
+                {hasInstallments && (
+                  <FormSelectField control={form.control} name="firstInstallment" label={t("fieldFirstInstallment")} options={firstInstallmentOptions} />
+                )}
               </>
             )}
 
