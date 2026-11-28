@@ -381,7 +381,9 @@
     "paidError": "Erro inesperado ao atualizar status de pagamento.",
     "typeRequired": "Selecione também o tipo para filtrar.",
     "confirmDeleteTitle": "Excluir transação?",
-    "confirmDeleteDescription": "\"{{name}}\" será excluída. Não é possível desfazer."
+    "confirmDeleteDescription": "\"{{name}}\" será excluída. Não é possível desfazer.",
+    "fieldInstallmentAmount": "Valor da parcela",
+    "installmentTotal": "Total: {{installments}} parcelas de {{amount}} = {{total}}"
   },
   "validation": {
     "emailInvalid": "Email inválido",

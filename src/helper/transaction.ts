@@ -86,6 +86,24 @@ export const transactionFormDefaults: TransactionForm = {
   id: 0,
 };
 
+export interface InstallmentSummary {
+  installments: number;
+  amount: number;
+  total: number;
+}
+
+/** O valor digitado é o de cada parcela. Sem parcelamento válido de duas ou mais, não há total a mostrar. */
+export function getInstallmentSummary(amount: string, numberOfInstallment: string): InstallmentSummary | null {
+  const installments = Number(numberOfInstallment);
+  const value = Number(amount);
+
+  if (!Number.isInteger(installments) || installments < 2 || installments > 420) return null;
+  if (!(value > 0 && value <= 999999.99)) return null;
+
+  // Em centavos, para 3 x 0,10 dar 0,30 e não 0,30000000000000004.
+  return { installments, amount: value, total: (Math.round(value * 100) * installments) / 100 };
+}
+
 export function mapTransactionFormToRequest(form: TransactionForm): TransactionRequest {
   const amount = Number.parseFloat(form.amount.replace(",", "."));
   const numberOfInstallment = form.numberOfInstallment.trim() ? Number.parseInt(form.numberOfInstallment, 10) : null;

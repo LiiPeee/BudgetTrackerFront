@@ -6,11 +6,12 @@ import { FormTextField } from "@/components/ui/form-text-field";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { toCategoryKey } from "@/helper/category";
 import type { Contact } from "@/helper/contact";
-import { newTransactionFormSchema, type TransactionForm, transactionFormSchema } from "@/helper/transaction";
+import { formatBRL } from "@/helper/utils";
+import { getInstallmentSummary, newTransactionFormSchema, type TransactionForm, transactionFormSchema } from "@/helper/transaction";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 type TransactionFormDialogProps = {
@@ -40,6 +41,11 @@ export function TransactionFormDialog({
     defaultValues,
   });
   const { isSubmitting } = form.formState;
+
+  const [amount, numberOfInstallment] = useWatch({ control: form.control, name: ["amount", "numberOfInstallment"] });
+  // Na edição altera-se um lançamento só, então não há total de parcelamento.
+  const installmentSummary = editingTransaction ? null : getInstallmentSummary(amount, numberOfInstallment);
+  const isInstallment = !editingTransaction && Number(numberOfInstallment) > 1;
 
   const contactNames = contacts.map((contact) => contact.name ?? "");
   // Um contato excluído continua selecionável na transação que já o usa.
@@ -118,7 +124,17 @@ export function TransactionFormDialog({
               ]}
             />
 
-            <FormTextField control={form.control} name="amount" label={t("fieldAmount")} type="number" step="0.01" placeholder={t("fieldAmountPlaceholder")} />
+            <FormTextField control={form.control} name="amount" label={t(isInstallment ? "fieldInstallmentAmount" : "fieldAmount")} type="number" step="0.01" placeholder={t("fieldAmountPlaceholder")} />
+
+            {installmentSummary && (
+              <p role="status" className="-mt-2 text-sm font-medium text-muted-foreground">
+                {t("installmentTotal", {
+                  installments: installmentSummary.installments,
+                  amount: formatBRL(installmentSummary.amount),
+                  total: formatBRL(installmentSummary.total),
+                })}
+              </p>
+            )}
 
             <FormSelectField
               control={form.control}
