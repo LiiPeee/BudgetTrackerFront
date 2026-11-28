@@ -383,7 +383,10 @@
     "confirmDeleteTitle": "Delete transaction?",
     "confirmDeleteDescription": "\"{{name}}\" will be deleted. This cannot be undone.",
     "fieldInstallmentAmount": "Installment amount",
-    "installmentTotal": "Total: {{installments}} installments of {{amount}} = {{total}}"
+    "installmentTotal": "Total: {{installments}} installments of {{amount}} = {{total}}",
+    "fieldFirstInstallment": "First installment",
+    "firstInstallmentCurrent": "This month ({{month}})",
+    "firstInstallmentNext": "Next month ({{month}})"
   },
   "validation": {
     "emailInvalid": "Invalid email",

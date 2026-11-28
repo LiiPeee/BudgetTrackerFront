@@ -383,7 +383,10 @@
     "confirmDeleteTitle": "¿Eliminar transacción?",
     "confirmDeleteDescription": "\"{{name}}\" se eliminará. No se puede deshacer.",
     "fieldInstallmentAmount": "Valor de la cuota",
-    "installmentTotal": "Total: {{installments}} cuotas de {{amount}} = {{total}}"
+    "installmentTotal": "Total: {{installments}} cuotas de {{amount}} = {{total}}",
+    "fieldFirstInstallment": "Primera cuota",
+    "firstInstallmentCurrent": "Este mes ({{month}})",
+    "firstInstallmentNext": "El próximo mes ({{month}})"
   },
   "validation": {
     "emailInvalid": "Correo inválido",

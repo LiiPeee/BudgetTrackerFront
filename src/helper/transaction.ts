@@ -9,7 +9,11 @@ export type PaidValue = "Sim" | "Não" | "";
 export type TransactionType = "Income" | "Expense";
 export type RecurrenceLabel = "Não" | "Diário" | "Quinzenal" | "Mensal" | "Ocasionalmente" | "-";
 
+/** Em que fatura cai a primeira parcela. */
+export type FirstInstallment = "current" | "next";
+
 export interface TransactionRequest {
+  firstInstallmentInCurrentMonth?: boolean;
   transactionName: string;
   subCategory?: string;
   numberOfInstallment?: number | null;
@@ -24,7 +28,7 @@ export interface TransactionRequest {
   date?: string;
 }
 
-export type EditTransactionRequest = Omit<TransactionRequest, "numberOfInstallment" | "dateOfInstallment" | "date">;
+export type EditTransactionRequest = Omit<TransactionRequest, "numberOfInstallment" | "dateOfInstallment" | "date" | "firstInstallmentInCurrentMonth">;
 
 export interface TransactionForm {
   id: number;
@@ -32,6 +36,7 @@ export interface TransactionForm {
   subCategory: string;
   numberOfInstallment: string;
   dateOfInstallment: string;
+  firstInstallment: FirstInstallment;
   paid: PaidValue;
   contactName: string;
   recurrence: string;
@@ -75,6 +80,7 @@ export const transactionFormDefaults: TransactionForm = {
   contactName: "",
   dateOfInstallment: "",
   numberOfInstallment: "",
+  firstInstallment: "next",
   paid: "",
   subCategory: "",
   transactionName: "",
@@ -123,6 +129,7 @@ export function mapTransactionFormToRequest(form: TransactionForm): TransactionR
     paid: form.paid === "Sim",
     numberOfInstallment,
     dateOfInstallment,
+    firstInstallmentInCurrentMonth: numberOfInstallment != null && form.firstInstallment === "current",
     recurrence: form.recurrence,
     contactName: form.contactName.trim(),
     date: form.date,
@@ -131,7 +138,7 @@ export function mapTransactionFormToRequest(form: TransactionForm): TransactionR
 
 export function mapTransactionFormToEditRequest(form: TransactionForm): EditTransactionRequest {
   // Installment data is fixed at creation; the list only has "3/12", which must not be sent back.
-  const { numberOfInstallment, dateOfInstallment, date, ...editRequest } = mapTransactionFormToRequest(form);
+  const { numberOfInstallment, dateOfInstallment, date, firstInstallmentInCurrentMonth, ...editRequest } = mapTransactionFormToRequest(form);
   return editRequest;
 }
 
@@ -148,6 +155,7 @@ export const transactionFormSchema = z.object({
   subCategory: z.string().trim().min(1, "validation:subCategoryRequired").max(30, "validation:subCategoryMax"),
   numberOfInstallment: z.string(),
   dateOfInstallment: z.string(),
+  firstInstallment: z.enum(["current", "next"]),
   paid: z.enum(["", "Sim", "Não"]).refine((value) => value !== "", "validation:paymentStatusRequired"),
   contactName: z.string().trim().min(1, "validation:contactRequired"),
   recurrence: z.string().min(1, "validation:recurrenceRequired"),
